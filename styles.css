@@ -1,0 +1,1381 @@
+/* Reset a základní styly */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: white;
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Obecné třídy */
+.page {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+.page.active {
+    display: block;
+    z-index: 10;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+/* Přihlašovací stránka */
+#login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 32px;
+    color: white;
+}
+
+.login-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.login-form {
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.input-container {
+    position: relative;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 16px 50px 16px 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 4px;
+    font-family: 'Courier New', monospace;
+    transition: border-color 0.3s ease;
+}
+
+.input-container input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.input-container i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+}
+
+.login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.error-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.test-pins {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 30px;
+    text-align: center;
+}
+
+.test-pins h3 {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.pin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pin-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.pin-item i {
+    font-size: 16px;
+}
+
+.admin-icon {
+    color: #10b981;
+}
+
+.user-icon {
+    color: #3b82f6;
+}
+
+.pin-code {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.pin-role {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Header */
+.header {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo-small {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+}
+
+.header-info h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.header-info p {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Hlavní obsah */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Kalendář */
+.calendar {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.calendar-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 8px;
+}
+
+.calendar-nav button {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.calendar-nav button:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #f3f4f6;
+}
+
+.calendar-weekday {
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+    min-height: 60px;
+    padding: 8px;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    background: white;
+}
+
+.calendar-day:hover {
+    background: #f0f9ff;
+}
+
+.calendar-day.other-month {
+    background: #f9fafb;
+    color: #9ca3af;
+}
+
+.calendar-day.today {
+    background: #dbeafe;
+    border-color: #3b82f6;
+}
+
+.calendar-day.selected {
+    background: #3b82f6;
+    color: white;
+}
+
+.calendar-day-number {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.calendar-day-shifts {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
+}
+
+.shift-indicator {
+    background: #3b82f6;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Směny */
+.shifts-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 20px;
+}
+
+.shifts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.shift-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.shift-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.shift-info h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.shift-time {
+    color: #6b7280;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.shift-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.shift-users {
+    border-top: 1px solid #f3f4f6;
+    padding-top: 16px;
+}
+
+.shift-users-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.users-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.user-tag {
+    background: #f3f4f6;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.user-tag .remove-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 0;
+    font-size: 10px;
+}
+
+.user-tag .remove-btn:hover {
+    color: #dc2626;
+}
+
+.no-users {
+    color: #9ca3af;
+    font-size: 14px;
+    font-style: italic;
+}
+
+/* Taby */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 30px;
+}
+
+.tab {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab:hover {
+    color: #374151;
+}
+
+.tab.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Modaly */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 0;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.modal form {
+    padding: 0 24px 24px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.modal-actions .btn {
+    min-width: 100px;
+}
+
+/* Formuláře */
+input, select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+/* Success message */
+.success-message {
+    text-align: center;
+    padding: 24px;
+}
+
+.success-icon {
+    width: 64px;
+    height: 64px;
+    background: #d1fae5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 32px;
+    color: #10b981;
+}
+
+.success-message h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.success-message p {
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+
+.pin-display {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.pin-display label {
+    display: block;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.pin-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pin-container .pin-code {
+    flex: 1;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.pin-note {
+    color: #6b7280;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+/* Správa uživatelů */
+.users-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.user-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #007bff;
+    transition: all 0.3s ease;
+}
+
+.user-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.user-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.user-role.admin {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.user-role.user {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.user-pin {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.user-pin-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.user-pin-code {
+    font-family: 'Courier New', monospace;
+    background: #f8f9fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #007bff;
+    border: 1px solid #dee2e6;
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.user-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
+}
+
+.user-stats-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.user-stats-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.user-stats-value {
+    font-weight: 600;
+    color: #007bff;
+    font-size: 1.1rem;
+}
+
+.empty-users {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+}
+
+.empty-users i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-users h3 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.empty-users p {
+    font-size: 0.9rem;
+}
+
+/* Správa pracovišť */
+.workplaces-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.workplace-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #28a745;
+    transition: all 0.3s ease;
+}
+
+.workplace-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.workplace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.workplace-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.workplace-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.workplace-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+.workplace-hours {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.workplace-hours-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.workplace-hours-time {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #28a745;
+}
+
+.workplace-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.workplace-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
+}
+
+.workplace-stats-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.workplace-stats-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.workplace-stats-value {
+    font-weight: 600;
+    color: #28a745;
+    font-size: 1.1rem;
+}
+
+.empty-workplaces {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+}
+
+.empty-workplaces i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-workplaces h3 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.empty-workplaces p {
+    font-size: 0.9rem;
+}
+
+/* Automaticky načtené pole */
+.auto-filled {
+    background-color: #e8f5e8 !important;
+    border-color: #28a745 !important;
+    animation: highlight 0.5s ease-in-out;
+}
+
+@keyframes highlight {
+    0% { background-color: #fff; }
+    50% { background-color: #d4edda; }
+    100% { background-color: #e8f5e8; }
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Automatické směny */
+.automatic-shifts-info {
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.info-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #1976d2;
+    font-size: 1rem;
+}
+
+.info-card p {
+    margin: 0;
+    color: #424242;
+    font-size: 0.9rem;
+}
+
+.weekdays-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.weekday-checkbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.weekday-checkbox:hover {
+    border-color: #007bff;
+    background: #f8f9fa;
+}
+
+.weekday-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.weekday-checkbox input[type="checkbox"]:checked + .weekday-label {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.weekday-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.automatic-shifts-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.automatic-rule-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #9c27b0;
+    transition: all 0.3s ease;
+}
+
+.automatic-rule-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.automatic-rule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.automatic-rule-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.automatic-rule-workplace {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.automatic-rule-days {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.automatic-day-tag {
+    background: #9c27b0;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.automatic-rule-time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.automatic-rule-time-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.automatic-rule-time-value {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #9c27b0;
+}
+
+.automatic-rule-period {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.automatic-rule-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
+}
+
+.automatic-rule-stats-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.automatic-rule-stats-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.automatic-rule-stats-value {
+    font-weight: 600;
+    color: #9c27b0;
+    font-size: 1.1rem;
+}
+
+.automatic-rule-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Filtr pro směny */
+.shifts-filter {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid #dee2e6;
+    border-radius: 20px;
+    background: white;
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.filter-btn:hover {
+    border-color: #007bff;
+    color: #007bff;
+    background: #f8f9fa;
+}
+
+.filter-btn.active {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.filter-btn i {
+    font-size: 0.8rem;
+}
+
+/* Obsazené směny */
+.shift-card.occupied {
+    opacity: 0.7;
+    border-left-color: #dc3545;
+}
+
+.shift-card.occupied .shift-header {
+    background: #f8f9fa;
+}
+
+.shift-card.occupied .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Responzivní design */
+@media (max-width: 768px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+        gap: 16px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .modal-actions .btn {
+        width: 100%;
+    }
+    
+    .calendar-day {
+        min-height: 50px;
+        padding: 4px;
+    }
+    
+    .calendar-day-number {
+        font-size: 12px;
+    }
+    
+    .shift-indicator {
+        font-size: 8px;
+        padding: 1px 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 24px;
+        margin: 10px;
+    }
+    
+    .main-content {
+        padding: 20px 10px;
+    }
+    
+    .modal-content {
+        margin: 10px;
+    }
+    
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .tab {
+        justify-content: center;
+    }
+}

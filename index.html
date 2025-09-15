@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Systém směn - Resort Blatnice</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Přihlašovací stránka -->
+    <div id="login-page" class="page active">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h1>Resort Blatnice</h1>
+                <p>Systém správy směn</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="pin">Zadejte váš PIN (5 číslic)</label>
+                    <div class="input-container">
+                        <input type="text" id="pin" name="pin" maxlength="5" placeholder="12345" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                
+                <div id="error-message" class="error-message"></div>
+                
+                <button type="submit" class="login-btn">
+                    <span class="btn-text">Přihlásit se</span>
+                    <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Přihlašování...
+                    </span>
+                </button>
+            </form>
+            
+            <div class="test-pins">
+                <h3>Testovací PINy:</h3>
+                <div class="pin-list">
+                    <div class="pin-item">
+                        <i class="fas fa-shield-alt admin-icon"></i>
+                        <span class="pin-code">12345</span>
+                        <span class="pin-role">Admin</span>
+                    </div>
+                    <div class="pin-item">
+                        <i class="fas fa-user user-icon"></i>
+                        <span class="pin-code">11111</span>
+                        <span class="pin-role">Uživatel</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin rozhraní -->
+    <div id="admin-page" class="page">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-small">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <div class="header-info">
+                        <h1>Admin Panel - Resort Blatnice</h1>
+                        <p>Vítejte, <span id="admin-name">Admin</span></p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button id="logout-btn" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i> Odhlásit se
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="tabs">
+                <button id="admin-calendar-tab" class="tab active" onclick="switchAdminTab('calendar')">
+                    <i class="fas fa-calendar-alt"></i> Kalendář směn
+                </button>
+                <button id="admin-shifts-tab" class="tab" onclick="switchAdminTab('shifts')">
+                    <i class="fas fa-clock"></i> Správa směn
+                </button>
+                <button id="admin-automatic-tab" class="tab" onclick="switchAdminTab('automatic')">
+                    <i class="fas fa-magic"></i> Automatické směny
+                </button>
+                <button id="admin-workplaces-tab" class="tab" onclick="switchAdminTab('workplaces')">
+                    <i class="fas fa-building"></i> Správa pracovišť
+                </button>
+                <button id="admin-users-tab" class="tab" onclick="switchAdminTab('users')">
+                    <i class="fas fa-users"></i> Správa uživatelů
+                </button>
+            </div>
+
+            <div id="admin-calendar-content" class="tab-content active">
+                <div class="content-grid">
+                    <div class="calendar-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-calendar-alt"></i> Kalendář směn</h2>
+                            <button id="new-shift-btn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Nová směna
+                            </button>
+                        </div>
+                        <div id="calendar" class="calendar"></div>
+                    </div>
+                    
+                    <div class="shifts-section">
+                        <h3 id="selected-date-title">Vyberte den v kalendáři</h3>
+                        <div id="shifts-list" class="shifts-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-shifts-content" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-clock"></i> Správa směn</h2>
+                    <button id="new-shift-btn-2" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nová směna
+                    </button>
+                </div>
+                
+                <div class="shifts-filter">
+                    <div class="filter-label">
+                        <i class="fas fa-filter"></i> Filtrovat podle pracoviště:
+                    </div>
+                    <div class="filter-buttons" id="workplace-filter-buttons">
+                        <button class="filter-btn active" data-workplace="all">
+                            <i class="fas fa-th"></i> Vše
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="admin-shifts-list" class="shifts-list"></div>
+            </div>
+
+            <div id="admin-automatic-content" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-magic"></i> Automatické směny</h2>
+                    <button id="create-automatic-shifts-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Vytvořit automatické směny
+                    </button>
+                </div>
+                <div class="automatic-shifts-info">
+                    <div class="info-card">
+                        <h3><i class="fas fa-info-circle"></i> Jak to funguje</h3>
+                        <p>Vyberte pracoviště, dny v týdnu a období. Systém automaticky vytvoří směny na každý vybraný den v týdnu až do koncového data.</p>
+                    </div>
+                </div>
+                <div id="automatic-shifts-list" class="automatic-shifts-list"></div>
+            </div>
+
+            <div id="admin-workplaces-content" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-building"></i> Správa pracovišť</h2>
+                    <button id="new-workplace-btn" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Nové pracoviště
+                    </button>
+                </div>
+                <div id="workplaces-list" class="workplaces-list"></div>
+            </div>
+
+            <div id="admin-users-content" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-users"></i> Správa uživatelů</h2>
+                    <button id="new-user-btn-2" class="btn btn-success">
+                        <i class="fas fa-user-plus"></i> Nový uživatel
+                    </button>
+                </div>
+                <div id="users-list" class="users-list"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Uživatelské rozhraní -->
+    <div id="user-page" class="page">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-small">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="header-info">
+                        <h1>Uživatelské rozhraní - Resort Blatnice</h1>
+                        <p>Vítejte, <span id="user-name">Uživatel</span></p>
+                    </div>
+                </div>
+                <button id="user-logout-btn" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i> Odhlásit se
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="tabs">
+                <button id="calendar-tab" class="tab active">
+                    <i class="fas fa-calendar-alt"></i> Kalendář směn
+                </button>
+                <button id="my-shifts-tab" class="tab">
+                    <i class="fas fa-hand-paper"></i> Moje směny (<span id="my-shifts-count">0</span>)
+                </button>
+            </div>
+
+            <div id="calendar-content" class="tab-content active">
+                <div class="content-grid">
+                    <div class="calendar-section">
+                        <h2><i class="fas fa-calendar-alt"></i> Dostupné směny</h2>
+                        <div id="user-calendar" class="calendar"></div>
+                    </div>
+                    
+                    <div class="shifts-section">
+                        <h3 id="user-selected-date-title">Vyberte den v kalendáři</h3>
+                        <div id="user-shifts-list" class="shifts-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="my-shifts-content" class="tab-content">
+                <h2><i class="fas fa-hand-paper"></i> Moje směny</h2>
+                <div id="my-shifts-list" class="shifts-list"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal pro novou směnu -->
+    <div id="new-shift-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-plus"></i> Nová směna</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="new-shift-form">
+                <div class="form-group">
+                    <label for="shift-position">Pracoviště</label>
+                    <select id="shift-position" name="shift-position" required>
+                        <option value="Wellness">Wellness</option>
+                        <option value="Bar">Bar</option>
+                        <option value="Kuchyně">Kuchyně</option>
+                        <option value="Úklid">Úklid</option>
+                        <option value="Recepce">Recepce</option>
+                        <option value="Ostatní">Ostatní</option>
+                    </select>
+                    <small class="form-help">Pracoviště s pevnými hodinami automaticky načte čas</small>
+                </div>
+                <div class="form-group">
+                    <label for="shift-date">Datum</label>
+                    <input type="date" id="shift-date" name="shift-date" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="shift-start">Čas od</label>
+                        <input type="time" id="shift-start" name="shift-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shift-end">Čas do</label>
+                        <input type="time" id="shift-end" name="shift-end" required>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary">Zrušit</button>
+                    <button type="submit" class="btn btn-primary">Vytvořit směnu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal pro automatické směny -->
+    <div id="automatic-shifts-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-magic"></i> Vytvořit automatické směny</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="automatic-shifts-form">
+                <div class="form-group">
+                    <label for="auto-workplace">Pracoviště</label>
+                    <select id="auto-workplace" name="auto-workplace" required>
+                        <option value="">Vyberte pracoviště</option>
+                    </select>
+                    <small class="form-help">Pracoviště s pevnými hodinami automaticky načte čas</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Dny v týdnu</label>
+                    <div class="weekdays-grid">
+                        <label class="weekday-checkbox">
+                            <input type="checkbox" name="weekdays" value="1">
+                            <span class="weekday-label">Po</span>
+                        </label>
+                        <label class="weekday-checkbox">
+                            <input type="checkbox" name="weekdays" value="2">
+                            <span class="weekday-label">Út</span>
+                        </label>
+                        <label class="weekday-checkbox">
+                            <input type="checkbox" name="weekdays" value="3">
+                            <span class="weekday-label">St</span>
+                        </label>
+                        <label class="weekday-checkbox">
+                            <input type="checkbox" name="weekdays" value="4">
+                            <span class="weekday-label">Čt</span>
+                        </label>
+                        <label class="weekday-checkbox">
+                            <input type="checkbox" name="weekdays" value="5">
+                            <span class="weekday-label">Pá</span>
+                        </label>
+                        <label class="weekday-checkbox">
+                            <input type="checkbox" name="weekdays" value="6">
+                            <span class="weekday-label">So</span>
+                        </label>
+                        <label class="weekday-checkbox">
+                            <input type="checkbox" name="weekdays" value="0">
+                            <span class="weekday-label">Ne</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="auto-start-time">Čas od</label>
+                        <input type="time" id="auto-start-time" name="auto-start-time" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="auto-end-time">Čas do</label>
+                        <input type="time" id="auto-end-time" name="auto-end-time" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auto-end-date">Směny vytvořit do</label>
+                    <input type="date" id="auto-end-date" name="auto-end-date" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideAutomaticShiftsModal()">Zrušit</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-magic"></i> Vytvořit směny
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal pro pracoviště -->
+    <div id="workplace-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-building"></i> <span id="workplace-modal-title">Nové pracoviště</span></h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="workplace-form">
+                <div class="form-group">
+                    <label for="workplace-name">Název pracoviště</label>
+                    <input type="text" id="workplace-name" name="workplace-name" required placeholder="Např. Wellness, Bar, Kuchyně">
+                </div>
+                <div class="form-group">
+                    <label for="workplace-description">Popis</label>
+                    <textarea id="workplace-description" name="workplace-description" placeholder="Krátký popis pracoviště"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="workplace-has-fixed-hours"> Má pevné pracovní hodiny
+                    </label>
+                </div>
+                <div id="workplace-hours-section" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="workplace-start-time">Čas od</label>
+                            <input type="time" id="workplace-start-time" name="workplace-start-time">
+                        </div>
+                        <div class="form-group">
+                            <label for="workplace-end-time">Čas do</label>
+                            <input type="time" id="workplace-end-time" name="workplace-end-time">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideWorkplaceModal()">Zrušit</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Uložit pracoviště
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal pro nového uživatele -->
+    <div id="new-user-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Nový uživatel</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div id="new-user-form-container">
+                <form id="new-user-form">
+                    <div class="form-group">
+                        <label for="user-name-input">Jméno uživatele</label>
+                        <input type="text" id="user-name-input" placeholder="Zadejte jméno uživatele" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary">Zrušit</button>
+                        <button type="submit" class="btn btn-success">Vytvořit uživatele</button>
+                    </div>
+                </form>
+            </div>
+            <div id="new-user-result" style="display: none;">
+                <div class="success-message">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Uživatel vytvořen!</h3>
+                    <p>Nový uživatel <strong id="created-user-name"></strong> byl úspěšně vytvořen.</p>
+                </div>
+                <div class="pin-display">
+                    <label>PIN uživatele</label>
+                    <div class="pin-container">
+                        <span id="new-user-pin" class="pin-code"></span>
+                        <button id="copy-pin-btn" class="btn btn-primary">
+                            <i class="fas fa-copy"></i> Kopírovat
+                        </button>
+                    </div>
+                    <p class="pin-note">Uživatel se může přihlásit pomocí tohoto PINu.</p>
+                </div>
+                <button id="close-user-modal" class="btn btn-success">Zavřít</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

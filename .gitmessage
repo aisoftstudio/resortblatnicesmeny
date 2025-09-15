@@ -1,0 +1,14 @@
+# <typ>: <stručný popis>
+
+# <dlouhý popis, pokud je potřeba>
+
+# <footer s referencí na issue, pokud existuje>
+
+# Typy commitů:
+# feat: nová funkce
+# fix: oprava bugu
+# docs: změny v dokumentaci
+# style: formátování, chybějící středníky, atd.
+# refactor: refaktoring kódu
+# test: přidání nebo úprava testů
+# chore: údržba, build procesy, atd.

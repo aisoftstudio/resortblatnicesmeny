@@ -1,0 +1,37 @@
+{
+  "name": "smeny-resort-blatnice",
+  "version": "1.0.0",
+  "description": "Systém správy směn pro Resort Blatnice - webová aplikace pro správu směn zaměstnanců",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server . -p 3000 -o",
+    "dev": "npx http-server . -p 3000 -o",
+    "build": "echo 'Build completed - static files ready for deployment'",
+    "deploy": "firebase deploy",
+    "serve": "firebase serve"
+  },
+  "keywords": [
+    "smeny",
+    "resort",
+    "blatnice",
+    "shift-management",
+    "employee-scheduling",
+    "web-app"
+  ],
+  "author": "Resort Blatnice",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/resort-blatnice/smeny-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/resort-blatnice/smeny-web/issues"
+  },
+  "homepage": "https://github.com/resort-blatnice/smeny-web#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
