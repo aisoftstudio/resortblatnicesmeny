@@ -8,7 +8,10 @@
     "dev": "npx http-server . -p 3000 -o",
     "build": "echo 'Build completed - static files ready for deployment'",
     "deploy": "firebase deploy",
-    "serve": "firebase serve"
+    "serve": "firebase serve",
+    "copy": "node copy-files.js",
+    "copy:watch": "node watch-files.js",
+    "dev:watch": "npm run copy:watch"
   },
   "keywords": [
     "smeny",

@@ -247,6 +247,78 @@ async function smazatUzivatele(id) {
     }
 }
 
+/**
+ * Vytvoření nového automatického pravidla v Firebase
+ */
+async function vytvoritAutomatickePravidlo(pravidloData) {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        const docRef = await db.collection('automaticRules').add(pravidloData);
+        return { success: true, id: docRef.id };
+    } catch (error) {
+        console.error('Chyba při vytváření automatického pravidla:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Aktualizace automatického pravidla v Firebase
+ */
+async function aktualizovatAutomatickePravidlo(id, pravidloData) {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        await db.collection('automaticRules').doc(id).update(pravidloData);
+        return { success: true };
+    } catch (error) {
+        console.error('Chyba při aktualizaci automatického pravidla:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Načtení všech automatických pravidel z Firebase
+ */
+async function nacistAutomatickaPravidla() {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        const querySnapshot = await db.collection('automaticRules').get();
+        const pravidla = [];
+        querySnapshot.forEach((doc) => {
+            pravidla.push({ id: doc.id, ...doc.data() });
+        });
+        return { success: true, data: pravidla };
+    } catch (error) {
+        console.error('Chyba při načítání automatických pravidel:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Smazání automatického pravidla z Firebase
+ */
+async function smazatAutomatickePravidlo(id) {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        await db.collection('automaticRules').doc(id).delete();
+        return { success: true };
+    } catch (error) {
+        console.error('Chyba při mazání automatického pravidla:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 // Export funkcí pro globální použití
 window.firebaseServices = {
     // Směny
@@ -264,6 +336,11 @@ window.firebaseServices = {
     aktualizovatUzivatele,
     nacistUzivatele,
     smazatUzivatele,
+    // Automatická pravidla
+    vytvoritAutomatickePravidlo,
+    aktualizovatAutomatickePravidlo,
+    nacistAutomatickaPravidla,
+    smazatAutomatickePravidlo,
     // Firebase služby
     auth,
     db

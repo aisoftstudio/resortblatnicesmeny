@@ -12,67 +12,49 @@ let selectedDate = null;
 let currentWorkplaceFilter = 'all';
 
 // Inicializace aplikace
-document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
+document.addEventListener('DOMContentLoaded', async function() {
     setupEventListeners();
-    loadData();
+    await initializeApp();
 });
 
 // Inicializace aplikace
-function initializeApp() {
-    // Načtení dat z localStorage
-    const savedShifts = localStorage.getItem('smeny-shifts');
-    const savedUsers = localStorage.getItem('smeny-users');
-    const savedWorkplaces = localStorage.getItem('smeny-workplaces');
-    const savedAutomaticRules = localStorage.getItem('smeny-automatic-rules');
+async function initializeApp() {
+    showLoading('Připojování k databázi...');
     
-    if (savedShifts) {
-        shifts = JSON.parse(savedShifts);
-    } else {
-        // Prázdný seznam směn - uživatelé si vytvoří vlastní
+    try {
+        // Inicializace prázdných polí
         shifts = [];
-    }
-    
-    if (savedUsers) {
-        users = JSON.parse(savedUsers);
-    } else {
-        // Pouze admin účet
-        users = [
-            {
-                id: 'admin-1',
-                pin: '12345',
-                name: 'Admin',
-                isAdmin: true
-            }
-        ];
-    }
-    
-    if (savedWorkplaces) {
-        workplaces = JSON.parse(savedWorkplaces);
-    } else {
-        // Prázdný seznam pracovišť - admin si vytvoří vlastní
+        users = [];
         workplaces = [];
-    }
-    
-    if (savedAutomaticRules) {
-        automaticRules = JSON.parse(savedAutomaticRules);
-    } else {
-        // Výchozí automatická pravidla (prázdné)
         automaticRules = [];
-    }
-    
-    // Kontrola přihlášeného uživatele
-    const savedUser = localStorage.getItem('smeny-current-user');
-    if (savedUser) {
-        try {
-            currentUser = JSON.parse(savedUser);
+        
+        // Kontrola přihlášeného uživatele z localStorage (jen pro session)
+        const savedUser = localStorage.getItem('smeny-current-user');
+        if (savedUser) {
+            try {
+                currentUser = JSON.parse(savedUser);
+            } catch (error) {
+                localStorage.removeItem('smeny-current-user');
+                currentUser = null;
+            }
+        }
+        
+        // Načtení dat z Firebase
+        await loadData();
+        
+        // Zobrazení příslušného rozhraní
+        if (currentUser) {
             showUserInterface();
-        } catch (error) {
-            localStorage.removeItem('smeny-current-user');
+        } else {
             showLoginPage();
         }
-    } else {
+        
+    } catch (error) {
+        console.error('Chyba při inicializaci aplikace:', error);
+        showErrorMessage('Chyba při připojení k databázi. Zkontrolujte internetové připojení.');
         showLoginPage();
+    } finally {
+        hideLoading();
     }
 }
 
@@ -225,6 +207,42 @@ function setupModalListeners() {
     newUserModal.addEventListener('click', function(e) {
         if (e.target === newUserModal) hideNewUserModal();
     });
+}
+
+// Zobrazení chybové zprávy
+function showErrorMessage(message) {
+    const errorMessage = document.getElementById('error-message');
+    if (errorMessage) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+    } else {
+        alert(message);
+    }
+}
+
+// Skrytí chybové zprávy
+function hideErrorMessage() {
+    const errorMessage = document.getElementById('error-message');
+    if (errorMessage) {
+        errorMessage.style.display = 'none';
+    }
+}
+
+// Zobrazení loading stavu
+function showLoading(message = 'Načítání...') {
+    const loadingElement = document.getElementById('loading-overlay');
+    if (loadingElement) {
+        loadingElement.style.display = 'flex';
+        loadingElement.querySelector('.loading-message').textContent = message;
+    }
+}
+
+// Skrytí loading stavu
+function hideLoading() {
+    const loadingElement = document.getElementById('loading-overlay');
+    if (loadingElement) {
+        loadingElement.style.display = 'none';
+    }
 }
 
 // Zobrazení přihlašovací stránky
@@ -710,7 +728,7 @@ function updateMyShiftsCount() {
 }
 
 // Přihlášení na směnu
-function subscribeToShift(shiftId) {
+async function subscribeToShift(shiftId) {
     const shift = shifts.find(s => s.id === shiftId);
     if (!shift) return;
     
@@ -726,37 +744,61 @@ function subscribeToShift(shiftId) {
         return;
     }
     
-    // Přihlášení na směnu
-    shift.users.push(currentUser.id);
-    saveData();
-    updateUserShiftsList();
-    updateMyShiftsList();
-    updateMyShiftsCount();
-    updateShiftsList();
-    updateAdminShiftsList();
-}
-
-// Odhlášení ze směny
-function unsubscribeFromShift(shiftId) {
-    const shift = shifts.find(s => s.id === shiftId);
-    if (shift) {
-        shift.users = shift.users.filter(id => id !== currentUser.id);
-        saveData();
+    try {
+        // Přihlášení na směnu
+        shift.users.push(currentUser.id);
+        await saveData();
+        
         updateUserShiftsList();
         updateMyShiftsList();
         updateMyShiftsCount();
         updateShiftsList();
         updateAdminShiftsList();
+        
+    } catch (error) {
+        console.error('Chyba při přihlašování na směnu:', error);
+        alert('Chyba při přihlašování na směnu. Zkuste to znovu.');
+        shift.users.pop(); // Odstranění uživatele ze směny při chybě
+    }
+}
+
+// Odhlášení ze směny
+async function unsubscribeFromShift(shiftId) {
+    const shift = shifts.find(s => s.id === shiftId);
+    if (shift) {
+        try {
+            shift.users = shift.users.filter(id => id !== currentUser.id);
+            await saveData();
+            
+            updateUserShiftsList();
+            updateMyShiftsList();
+            updateMyShiftsCount();
+            updateShiftsList();
+            updateAdminShiftsList();
+            
+        } catch (error) {
+            console.error('Chyba při odhlašování ze směny:', error);
+            alert('Chyba při odhlašování ze směny. Zkuste to znovu.');
+            // Vrácení uživatele zpět do směny při chybě
+            shift.users.push(currentUser.id);
+        }
     }
 }
 
 // Odstranění uživatele ze směny (admin)
-function removeUserFromShift(shiftId, userId) {
+async function removeUserFromShift(shiftId, userId) {
     const shift = shifts.find(s => s.id === shiftId);
     if (shift) {
-        shift.users = shift.users.filter(id => id !== userId);
-        saveData();
-        updateShiftsList();
+        try {
+            shift.users = shift.users.filter(id => id !== userId);
+            await saveData();
+            updateShiftsList();
+        } catch (error) {
+            console.error('Chyba při odstranění uživatele ze směny:', error);
+            alert('Chyba při odstranění uživatele ze směny. Zkuste to znovu.');
+            // Vrácení uživatele zpět do směny při chybě
+            shift.users.push(userId);
+        }
     }
 }
 
@@ -782,7 +824,7 @@ function hideNewShiftModal() {
 }
 
 // Vytvoření nové směny
-function handleNewShift(e) {
+async function handleNewShift(e) {
     e.preventDefault();
     
     // Získání hodnot přímo z inputů podle ID
@@ -806,17 +848,24 @@ function handleNewShift(e) {
         users: []
     };
     
-    shifts.push(newShift);
-    saveData();
-    
-    hideNewShiftModal();
-    
-    // Aktualizace všech zobrazení
-    renderCalendar('calendar');
-    renderCalendar('user-calendar');
-    updateShiftsList();
-    updateUserShiftsList();
-    updateAdminShiftsList();
+    try {
+        shifts.push(newShift);
+        await saveData();
+        
+        hideNewShiftModal();
+        
+        // Aktualizace všech zobrazení
+        renderCalendar('calendar');
+        renderCalendar('user-calendar');
+        updateShiftsList();
+        updateUserShiftsList();
+        updateAdminShiftsList();
+        
+    } catch (error) {
+        console.error('Chyba při vytváření směny:', error);
+        alert('Chyba při ukládání směny. Zkuste to znovu.');
+        shifts.pop(); // Odstranění směny z pole při chybě
+    }
 }
 
 // Zobrazení modalu pro nového uživatele
@@ -833,7 +882,7 @@ function hideNewUserModal() {
 }
 
 // Vytvoření nového uživatele
-function handleNewUser(e) {
+async function handleNewUser(e) {
     e.preventDefault();
     
     const formData = new FormData(e.target);
@@ -847,17 +896,24 @@ function handleNewUser(e) {
         isAdmin: false
     };
     
-    users.push(newUser);
-    saveData();
-    
-    // Aktualizace seznamu uživatelů
-    updateUsersList();
-    
-    // Zobrazení výsledku
-    document.getElementById('new-user-form-container').style.display = 'none';
-    document.getElementById('new-user-result').style.display = 'block';
-    document.getElementById('created-user-name').textContent = userName;
-    document.getElementById('new-user-pin').textContent = newPin;
+    try {
+        users.push(newUser);
+        await saveData();
+        
+        // Aktualizace seznamu uživatelů
+        updateUsersList();
+        
+        // Zobrazení výsledku
+        document.getElementById('new-user-form-container').style.display = 'none';
+        document.getElementById('new-user-result').style.display = 'block';
+        document.getElementById('created-user-name').textContent = userName;
+        document.getElementById('new-user-pin').textContent = newPin;
+        
+    } catch (error) {
+        console.error('Chyba při vytváření uživatele:', error);
+        alert('Chyba při ukládání uživatele. Zkuste to znovu.');
+        users.pop(); // Odstranění uživatele z pole při chybě
+    }
 }
 
 // Kopírování PINu
@@ -881,96 +937,154 @@ function generatePin() {
     return Math.floor(10000 + Math.random() * 90000).toString();
 }
 
-// Uložení dat - hybridní přístup (localStorage + Firebase)
+// Uložení dat - pouze Firebase
 async function saveData() {
-    // Uložení do localStorage pro offline podporu
-    localStorage.setItem('smeny-shifts', JSON.stringify(shifts));
-    localStorage.setItem('smeny-users', JSON.stringify(users));
-    localStorage.setItem('smeny-workplaces', JSON.stringify(workplaces));
-    localStorage.setItem('smeny-automatic-rules', JSON.stringify(automaticRules));
+    if (!window.firebaseServices) {
+        throw new Error('Firebase služby nejsou dostupné');
+    }
     
-    // Uložení do Firebase (pokud je dostupné)
     try {
-        if (window.firebaseServices) {
-            // Synchronizace směn s Firebase
-            for (const shift of shifts) {
-                if (!shift.firebaseId) {
-                    // Nová směna - vytvoř v Firebase
-                    const result = await window.firebaseServices.vytvoritSměnu(shift);
-                    if (result.success) {
-                        shift.firebaseId = result.id;
-                    }
+        // Synchronizace směn s Firebase
+        for (const shift of shifts) {
+            if (!shift.firebaseId) {
+                // Nová směna - vytvoř v Firebase
+                const result = await window.firebaseServices.vytvoritSměnu(shift);
+                if (result.success) {
+                    shift.firebaseId = result.id;
                 } else {
-                    // Existující směna - aktualizuj v Firebase
-                    await window.firebaseServices.aktualizovatSměnu(shift.firebaseId, shift);
+                    throw new Error(`Chyba při vytváření směny: ${result.error}`);
                 }
-            }
-            
-            // Synchronizace pracovišť s Firebase
-            for (const workplace of workplaces) {
-                if (!workplace.firebaseId) {
-                    // Nové pracoviště - vytvoř v Firebase
-                    const result = await window.firebaseServices.vytvoritPracoviste(workplace);
-                    if (result.success) {
-                        workplace.firebaseId = result.id;
-                    }
-                } else {
-                    // Existující pracoviště - aktualizuj v Firebase
-                    await window.firebaseServices.aktualizovatPracoviste(workplace.firebaseId, workplace);
-                }
-            }
-            
-            // Synchronizace uživatelů s Firebase
-            for (const user of users) {
-                if (!user.firebaseId) {
-                    // Nový uživatel - vytvoř v Firebase
-                    const result = await window.firebaseServices.vytvoritUzivatele(user);
-                    if (result.success) {
-                        user.firebaseId = result.id;
-                    }
-                } else {
-                    // Existující uživatel - aktualizuj v Firebase
-                    await window.firebaseServices.aktualizovatUzivatele(user.firebaseId, user);
+            } else {
+                // Existující směna - aktualizuj v Firebase
+                const result = await window.firebaseServices.aktualizovatSměnu(shift.firebaseId, shift);
+                if (!result.success) {
+                    throw new Error(`Chyba při aktualizaci směny: ${result.error}`);
                 }
             }
         }
+        
+        // Synchronizace pracovišť s Firebase
+        for (const workplace of workplaces) {
+            if (!workplace.firebaseId) {
+                // Nové pracoviště - vytvoř v Firebase
+                const result = await window.firebaseServices.vytvoritPracoviste(workplace);
+                if (result.success) {
+                    workplace.firebaseId = result.id;
+                } else {
+                    throw new Error(`Chyba při vytváření pracoviště: ${result.error}`);
+                }
+            } else {
+                // Existující pracoviště - aktualizuj v Firebase
+                const result = await window.firebaseServices.aktualizovatPracoviste(workplace.firebaseId, workplace);
+                if (!result.success) {
+                    throw new Error(`Chyba při aktualizaci pracoviště: ${result.error}`);
+                }
+            }
+        }
+        
+        // Synchronizace uživatelů s Firebase
+        for (const user of users) {
+            if (!user.firebaseId) {
+                // Nový uživatel - vytvoř v Firebase
+                const result = await window.firebaseServices.vytvoritUzivatele(user);
+                if (result.success) {
+                    user.firebaseId = result.id;
+                } else {
+                    throw new Error(`Chyba při vytváření uživatele: ${result.error}`);
+                }
+            } else {
+                // Existující uživatel - aktualizuj v Firebase
+                const result = await window.firebaseServices.aktualizovatUzivatele(user.firebaseId, user);
+                if (!result.success) {
+                    throw new Error(`Chyba při aktualizaci uživatele: ${result.error}`);
+                }
+            }
+        }
+        
+        // Synchronizace automatických pravidel s Firebase
+        for (const rule of automaticRules) {
+            if (!rule.firebaseId) {
+                // Nové pravidlo - vytvoř v Firebase
+                const result = await window.firebaseServices.vytvoritAutomatickePravidlo(rule);
+                if (result.success) {
+                    rule.firebaseId = result.id;
+                } else {
+                    throw new Error(`Chyba při vytváření automatického pravidla: ${result.error}`);
+                }
+            } else {
+                // Existující pravidlo - aktualizuj v Firebase
+                const result = await window.firebaseServices.aktualizovatAutomatickePravidlo(rule.firebaseId, rule);
+                if (!result.success) {
+                    throw new Error(`Chyba při aktualizaci automatického pravidla: ${result.error}`);
+                }
+            }
+        }
+        
+        console.log('Data úspěšně uložena do Firebase');
     } catch (error) {
-        console.log('Firebase nedostupné, data uložena pouze lokálně:', error);
+        console.error('Chyba při ukládání dat do Firebase:', error);
+        throw error;
     }
 }
 
-// Načtení dat - hybridní přístup (localStorage + Firebase)
+// Načtení dat - pouze Firebase
 async function loadData() {
+    if (!window.firebaseServices) {
+        throw new Error('Firebase služby nejsou dostupné');
+    }
+    
     try {
-        if (window.firebaseServices) {
-            // Načtení dat z Firebase
-            const shiftsResult = await window.firebaseServices.nacistSměny();
-            const usersResult = await window.firebaseServices.nacistUzivatele();
-            const workplacesResult = await window.firebaseServices.nacistPracoviste();
-            
-            if (shiftsResult.success && shiftsResult.data.length > 0) {
-                shifts = shiftsResult.data;
-                console.log('Směny načteny z Firebase:', shiftsResult.data.length);
-            }
-            
-            if (usersResult.success && usersResult.data.length > 0) {
-                users = usersResult.data;
-                console.log('Uživatelé načteni z Firebase:', usersResult.data.length);
-            }
-            
-            if (workplacesResult.success && workplacesResult.data.length > 0) {
-                workplaces = workplacesResult.data;
-                console.log('Pracoviště načtena z Firebase:', workplacesResult.data.length);
-            }
-            
-            // Aktualizace UI po načtení dat
-            if (currentUser) {
-                showUserInterface();
-            }
+        // Načtení dat z Firebase
+        const shiftsResult = await window.firebaseServices.nacistSměny();
+        const usersResult = await window.firebaseServices.nacistUzivatele();
+        const workplacesResult = await window.firebaseServices.nacistPracoviste();
+        const automaticRulesResult = await window.firebaseServices.nacistAutomatickaPravidla();
+        
+        if (!shiftsResult.success) {
+            throw new Error(`Chyba při načítání směn: ${shiftsResult.error}`);
         }
+        if (!usersResult.success) {
+            throw new Error(`Chyba při načítání uživatelů: ${usersResult.error}`);
+        }
+        if (!workplacesResult.success) {
+            throw new Error(`Chyba při načítání pracovišť: ${workplacesResult.error}`);
+        }
+        if (!automaticRulesResult.success) {
+            throw new Error(`Chyba při načítání automatických pravidel: ${automaticRulesResult.error}`);
+        }
+        
+        // Nastavení dat
+        shifts = shiftsResult.data || [];
+        users = usersResult.data || [];
+        workplaces = workplacesResult.data || [];
+        automaticRules = automaticRulesResult.data || [];
+        
+        // Pokud nejsou žádní uživatelé, vytvoř admin účet
+        if (users.length === 0) {
+            const adminUser = {
+                id: 'admin-1',
+                pin: '12345',
+                name: 'Admin',
+                isAdmin: true
+            };
+            users.push(adminUser);
+            await saveData(); // Uloží admin uživatele do Firebase
+        }
+        
+        console.log('Data úspěšně načtena z Firebase:');
+        console.log(`- Směny: ${shifts.length}`);
+        console.log(`- Uživatelé: ${users.length}`);
+        console.log(`- Pracoviště: ${workplaces.length}`);
+        console.log(`- Automatická pravidla: ${automaticRules.length}`);
+        
+        // Aktualizace UI po načtení dat
+        if (currentUser) {
+            showUserInterface();
+        }
+        
     } catch (error) {
-        console.log('Firebase nedostupné, používáme localStorage:', error);
-        // Data jsou již načtena z localStorage v initializeApp()
+        console.error('Chyba při načítání dat z Firebase:', error);
+        throw error;
     }
 }
 
@@ -1293,7 +1407,7 @@ function editWorkplace(workplaceId) {
     document.getElementById('workplace-form').dataset.editId = workplaceId;
 }
 
-function handleWorkplace(e) {
+async function handleWorkplace(e) {
     e.preventDefault();
     
     const name = document.getElementById('workplace-name').value;
@@ -1322,25 +1436,35 @@ function handleWorkplace(e) {
         endTime: hasFixedHours ? endTime : null
     };
     
-    if (editId) {
-        // Editace existujícího pracoviště
-        const workplace = workplaces.find(w => w.id === editId);
-        if (workplace) {
-            Object.assign(workplace, workplaceData);
+    try {
+        if (editId) {
+            // Editace existujícího pracoviště
+            const workplace = workplaces.find(w => w.id === editId);
+            if (workplace) {
+                Object.assign(workplace, workplaceData);
+            }
+        } else {
+            // Vytvoření nového pracoviště
+            const newWorkplace = {
+                id: 'workplace-' + Date.now(),
+                ...workplaceData
+            };
+            workplaces.push(newWorkplace);
         }
-    } else {
-        // Vytvoření nového pracoviště
-        const newWorkplace = {
-            id: 'workplace-' + Date.now(),
-            ...workplaceData
-        };
-        workplaces.push(newWorkplace);
+        
+        await saveData();
+        updateWorkplacesList();
+        updateWorkplaceSelect();
+        hideWorkplaceModal();
+        
+    } catch (error) {
+        console.error('Chyba při ukládání pracoviště:', error);
+        alert('Chyba při ukládání pracoviště. Zkuste to znovu.');
+        // Odstranění pracoviště z pole při chybě (pokud bylo nové)
+        if (!editId) {
+            workplaces.pop();
+        }
     }
-    
-    saveData();
-    updateWorkplacesList();
-    updateWorkplaceSelect();
-    hideWorkplaceModal();
 }
 
 async function deleteWorkplace(workplaceId) {
@@ -1511,7 +1635,7 @@ function hideAutomaticShiftsModal() {
     document.getElementById('automatic-shifts-form').reset();
 }
 
-function handleAutomaticShifts(e) {
+async function handleAutomaticShifts(e) {
     e.preventDefault();
     
     const workplace = document.getElementById('auto-workplace').value;
@@ -1555,26 +1679,36 @@ function handleAutomaticShifts(e) {
         createdAt: new Date().toISOString()
     };
     
-    // Přidání pravidla
-    automaticRules.push(rule);
-    
-    // Generování směn
-    generateShiftsFromRule(rule);
-    
-    // Uložení
-    saveData();
-    
-    // Aktualizace zobrazení
-    updateAutomaticShiftsList();
-    updateAdminShiftsList();
-    updateShiftsList();
-    updateUserShiftsList();
-    renderCalendar('calendar');
-    renderCalendar('user-calendar');
-    
-    hideAutomaticShiftsModal();
-    
-    alert(`Úspěšně vytvořeno pravidlo a vygenerovány směny pro ${workplace}!`);
+    try {
+        // Přidání pravidla
+        automaticRules.push(rule);
+        
+        // Generování směn
+        generateShiftsFromRule(rule);
+        
+        // Uložení
+        await saveData();
+        
+        // Aktualizace zobrazení
+        updateAutomaticShiftsList();
+        updateAdminShiftsList();
+        updateShiftsList();
+        updateUserShiftsList();
+        renderCalendar('calendar');
+        renderCalendar('user-calendar');
+        
+        hideAutomaticShiftsModal();
+        
+        alert(`Úspěšně vytvořeno pravidlo a vygenerovány směny pro ${workplace}!`);
+        
+    } catch (error) {
+        console.error('Chyba při vytváření automatických směn:', error);
+        alert('Chyba při vytváření automatických směn. Zkuste to znovu.');
+        // Odstranění pravidla a směn při chybě
+        automaticRules.pop();
+        // Odstranění vygenerovaných směn
+        shifts = shifts.filter(shift => !shift.ruleId || shift.ruleId !== rule.id);
+    }
 }
 
 function generateShiftsFromRule(rule) {
@@ -1621,27 +1755,41 @@ function generateShiftsFromRule(rule) {
     return generatedCount;
 }
 
-function deleteAutomaticRule(ruleId) {
+async function deleteAutomaticRule(ruleId) {
     if (!confirm('Opravdu chcete smazat toto automatické pravidlo? Všechny vygenerované směny budou také smazány.')) {
         return;
     }
     
-    // Smazání všech směn vygenerovaných tímto pravidlem
-    shifts = shifts.filter(shift => shift.ruleId !== ruleId);
-    
-    // Smazání pravidla
-    automaticRules = automaticRules.filter(rule => rule.id !== ruleId);
-    
-    // Uložení změn
-    saveData();
-    
-    // Aktualizace zobrazení
-    updateAutomaticShiftsList();
-    updateAdminShiftsList();
-    updateShiftsList();
-    updateUserShiftsList();
-    renderCalendar('calendar');
-    renderCalendar('user-calendar');
+    try {
+        // Najdeme pravidlo pro získání Firebase ID
+        const rule = automaticRules.find(r => r.id === ruleId);
+        
+        // Smazání všech směn vygenerovaných tímto pravidlem
+        shifts = shifts.filter(shift => shift.ruleId !== ruleId);
+        
+        // Smazání pravidla
+        automaticRules = automaticRules.filter(r => r.id !== ruleId);
+        
+        // Uložení změn
+        await saveData();
+        
+        // Smazání pravidla z Firebase (pokud má Firebase ID)
+        if (rule && rule.firebaseId) {
+            await window.firebaseServices.smazatAutomatickePravidlo(rule.firebaseId);
+        }
+        
+        // Aktualizace zobrazení
+        updateAutomaticShiftsList();
+        updateAdminShiftsList();
+        updateShiftsList();
+        updateUserShiftsList();
+        renderCalendar('calendar');
+        renderCalendar('user-calendar');
+        
+    } catch (error) {
+        console.error('Chyba při mazání automatického pravidla:', error);
+        alert('Chyba při mazání automatického pravidla. Zkuste to znovu.');
+    }
 }
 
 // Globální funkce pro kalendář
