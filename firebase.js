@@ -103,12 +103,168 @@ async function smazatSměnu(id) {
     }
 }
 
+/**
+ * Vytvoření nového pracoviště v Firebase
+ */
+async function vytvoritPracoviste(pracovisteData) {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        const docRef = await db.collection('workplaces').add(pracovisteData);
+        return { success: true, id: docRef.id };
+    } catch (error) {
+        console.error('Chyba při vytváření pracoviště:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Aktualizace pracoviště v Firebase
+ */
+async function aktualizovatPracoviste(id, pracovisteData) {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        await db.collection('workplaces').doc(id).update(pracovisteData);
+        return { success: true };
+    } catch (error) {
+        console.error('Chyba při aktualizaci pracoviště:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Načtení všech pracovišť z Firebase
+ */
+async function nacistPracoviste() {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        const querySnapshot = await db.collection('workplaces').get();
+        const pracoviste = [];
+        querySnapshot.forEach((doc) => {
+            pracoviste.push({ id: doc.id, ...doc.data() });
+        });
+        return { success: true, data: pracoviste };
+    } catch (error) {
+        console.error('Chyba při načítání pracovišť:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Smazání pracoviště z Firebase
+ */
+async function smazatPracoviste(id) {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        await db.collection('workplaces').doc(id).delete();
+        return { success: true };
+    } catch (error) {
+        console.error('Chyba při mazání pracoviště:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Vytvoření nového uživatele v Firebase
+ */
+async function vytvoritUzivatele(uzivatelData) {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        const docRef = await db.collection('users').add(uzivatelData);
+        return { success: true, id: docRef.id };
+    } catch (error) {
+        console.error('Chyba při vytváření uživatele:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Aktualizace uživatele v Firebase
+ */
+async function aktualizovatUzivatele(id, uzivatelData) {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        await db.collection('users').doc(id).update(uzivatelData);
+        return { success: true };
+    } catch (error) {
+        console.error('Chyba při aktualizaci uživatele:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Načtení všech uživatelů z Firebase
+ */
+async function nacistUzivatele() {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        const querySnapshot = await db.collection('users').get();
+        const uzivatele = [];
+        querySnapshot.forEach((doc) => {
+            uzivatele.push({ id: doc.id, ...doc.data() });
+        });
+        return { success: true, data: uzivatele };
+    } catch (error) {
+        console.error('Chyba při načítání uživatelů:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Smazání uživatele z Firebase
+ */
+async function smazatUzivatele(id) {
+    if (!db) {
+        return { success: false, error: 'Firestore není inicializováno' };
+    }
+    
+    try {
+        await db.collection('users').doc(id).delete();
+        return { success: true };
+    } catch (error) {
+        console.error('Chyba při mazání uživatele:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 // Export funkcí pro globální použití
 window.firebaseServices = {
+    // Směny
     vytvoritSměnu,
     aktualizovatSměnu,
     nacistSměny,
     smazatSměnu,
+    // Pracoviště
+    vytvoritPracoviste,
+    aktualizovatPracoviste,
+    nacistPracoviste,
+    smazatPracoviste,
+    // Uživatelé
+    vytvoritUzivatele,
+    aktualizovatUzivatele,
+    nacistUzivatele,
+    smazatUzivatele,
+    // Firebase služby
     auth,
     db
 };

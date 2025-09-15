@@ -260,9 +260,9 @@ body {
 
 /* Header */
 .header {
-    background: white;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #1d4ed8;
 }
 
 .header-content {
@@ -296,12 +296,12 @@ body {
 .header-info h1 {
     font-size: 20px;
     font-weight: 600;
-    color: #1f2937;
+    color: white;
     margin-bottom: 4px;
 }
 
 .header-info p {
-    color: #6b7280;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 14px;
 }
 

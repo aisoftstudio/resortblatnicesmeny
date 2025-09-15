@@ -905,6 +905,34 @@ async function saveData() {
                     await window.firebaseServices.aktualizovatSměnu(shift.firebaseId, shift);
                 }
             }
+            
+            // Synchronizace pracovišť s Firebase
+            for (const workplace of workplaces) {
+                if (!workplace.firebaseId) {
+                    // Nové pracoviště - vytvoř v Firebase
+                    const result = await window.firebaseServices.vytvoritPracoviste(workplace);
+                    if (result.success) {
+                        workplace.firebaseId = result.id;
+                    }
+                } else {
+                    // Existující pracoviště - aktualizuj v Firebase
+                    await window.firebaseServices.aktualizovatPracoviste(workplace.firebaseId, workplace);
+                }
+            }
+            
+            // Synchronizace uživatelů s Firebase
+            for (const user of users) {
+                if (!user.firebaseId) {
+                    // Nový uživatel - vytvoř v Firebase
+                    const result = await window.firebaseServices.vytvoritUzivatele(user);
+                    if (result.success) {
+                        user.firebaseId = result.id;
+                    }
+                } else {
+                    // Existující uživatel - aktualizuj v Firebase
+                    await window.firebaseServices.aktualizovatUzivatele(user.firebaseId, user);
+                }
+            }
         }
     } catch (error) {
         console.log('Firebase nedostupné, data uložena pouze lokálně:', error);
@@ -1098,10 +1126,13 @@ function updateAdminShiftsList() {
     }).join('');
 }
 
-function deleteUser(userId) {
+async function deleteUser(userId) {
     if (!confirm('Opravdu chcete smazat tohoto uživatele? Tato akce je nevratná.')) {
         return;
     }
+    
+    // Najdeme uživatele pro získání Firebase ID
+    const user = users.find(u => u.id === userId);
     
     // Odstranění uživatele ze všech směn
     shifts.forEach(shift => {
@@ -1111,9 +1142,18 @@ function deleteUser(userId) {
     // Odstranění uživatele ze seznamu
     users = users.filter(user => user.id !== userId);
     
-    // Uložení změn
+    // Uložení změn do localStorage
     localStorage.setItem('smeny-users', JSON.stringify(users));
     localStorage.setItem('smeny-shifts', JSON.stringify(shifts));
+    
+    // Odstranění uživatele z Firebase (pokud má Firebase ID)
+    try {
+        if (window.firebaseServices && user && user.firebaseId) {
+            await window.firebaseServices.smazatUzivatele(user.firebaseId);
+        }
+    } catch (error) {
+        console.log('Chyba při mazání uživatele z Firebase:', error);
+    }
     
     // Aktualizace zobrazení
     updateUsersList();
@@ -1303,7 +1343,7 @@ function handleWorkplace(e) {
     hideWorkplaceModal();
 }
 
-function deleteWorkplace(workplaceId) {
+async function deleteWorkplace(workplaceId) {
     if (!confirm('Opravdu chcete smazat toto pracoviště? Tato akce je nevratná.')) {
         return;
     }
@@ -1317,11 +1357,18 @@ function deleteWorkplace(workplaceId) {
         return;
     }
     
-    // Odstranění pracoviště
+    // Odstranění pracoviště z localStorage
     workplaces = workplaces.filter(w => w.id !== workplaceId);
-    
-    // Uložení změn
     localStorage.setItem('smeny-workplaces', JSON.stringify(workplaces));
+    
+    // Odstranění pracoviště z Firebase (pokud má Firebase ID)
+    try {
+        if (window.firebaseServices && workplace && workplace.firebaseId) {
+            await window.firebaseServices.smazatPracoviste(workplace.firebaseId);
+        }
+    } catch (error) {
+        console.log('Chyba při mazání pracoviště z Firebase:', error);
+    }
     
     // Aktualizace zobrazení
     updateWorkplacesList();
