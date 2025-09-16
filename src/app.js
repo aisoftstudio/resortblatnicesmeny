@@ -24,7 +24,15 @@ let spravaUzivateluManager = null;
  * Inicializace aplikace
  */
 async function initializeApp() {
-    console.log('🚀 Inicializuji aplikaci...');
+    console.log('🚀 Spouštím MODULÁRNÍ VERZI aplikace!');
+    console.log('📦 Všechny Admin sekce jsou migrovány do modulů');
+    console.log('🔧 Manager třídy:', {
+        KalendarSmenManager: typeof KalendarSmenManager,
+        SpravaSmenManager: typeof SpravaSmenManager,
+        AutomatickeSmenyManager: typeof AutomatickeSmenyManager,
+        SpravaPracovistManager: typeof SpravaPracovistManager,
+        SpravaUzivateluManager: typeof SpravaUzivateluManager
+    });
     
     try {
         // Inicializace Firebase služby
