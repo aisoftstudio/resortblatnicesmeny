@@ -109,7 +109,7 @@ body {
     background: #dc2626;
 }
 
-/* Přihlašovací stránka */
+/* Přihlašovací stránka - Základní styly pro desktop */
 #login-page {
     display: flex;
     align-items: center;
@@ -121,6 +121,25 @@ body {
     position: fixed;
     top: 0;
     left: 0;
+}
+
+/* Zajištění centrování pro všechny zařízení větší než 768px */
+@media (min-width: 769px) {
+    #login-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .login-container {
+        max-width: 450px;
+        width: 100%;
+        padding: 40px;
+        border-radius: 20px;
+        background: white;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
 }
 
 .login-container {
@@ -1397,12 +1416,347 @@ input:focus, select:focus {
     }
 }
 
-@media (max-width: 480px) {
+/* Specifické styly pro různé typy zařízení */
+
+/* Desktop specifické styly */
+.desktop-device #login-page {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.desktop-device .login-container {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 450px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 20px;
+    background: white;
+}
+
+.desktop-device .logo {
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+}
+
+/* Tablet specifické styly */
+.tablet-device #login-page {
+    background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.tablet-device .login-container {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    max-width: 500px;
+    width: 100%;
+    padding: 50px;
+    border-radius: 20px;
+    background: white;
+}
+
+.tablet-device .logo {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    box-shadow: 0 6px 12px rgba(14, 165, 233, 0.4);
+}
+
+/* Mobile specifické styly */
+.mobile-device #login-page {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+}
+
+.mobile-device .login-container {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.mobile-device .logo {
+    background: linear-gradient(135deg, #ffffff, #f0f9ff);
+    color: #1e40af;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-device .login-header h1 {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-device .login-header p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Orientace specifické styly */
+.portrait-orientation .login-container {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.landscape-orientation .login-container {
+    max-width: 400px;
+}
+
+/* Animace specifické pro zařízení */
+.desktop-device .login-container {
+    animation: desktopSlideIn 0.8s ease-out;
+}
+
+.tablet-device .login-container {
+    animation: tabletFadeIn 0.6s ease-out;
+}
+
+.mobile-device .login-container {
+    animation: mobileSlideUp 0.5s ease-out;
+}
+
+@keyframes desktopSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes tabletFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes mobileSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover efekty pouze pro desktop */
+.desktop-device .login-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px rgba(59, 130, 246, 0.4);
+}
+
+.desktop-device .logo:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+/* Styly pro tablety (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
     .login-container {
-        padding: 24px;
-        margin: 10px;
+        max-width: 500px;
+        padding: 50px;
     }
     
+    .login-header h1 {
+        font-size: 32px;
+    }
+    
+    .logo {
+        width: 100px;
+        height: 100px;
+        font-size: 40px;
+    }
+}
+
+/* Styly pro mobily (max-width: 768px) - Celá obrazovka */
+@media (max-width: 768px) {
+    #login-page {
+        padding: 0;
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+    }
+    
+    .login-container {
+        width: 100%;
+        max-width: 100%;
+        height: 100vh;
+        padding: 20px;
+        border-radius: 0;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: none;
+    }
+    
+    .login-header {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+    
+    .logo {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, #ffffff, #f0f9ff);
+        color: #1e40af;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    
+    .login-header h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .login-header p {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .login-form {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 0;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 12px;
+        font-size: 16px;
+    }
+    
+    .input-container input {
+        padding: 18px 50px 18px 20px;
+        font-size: 18px;
+        letter-spacing: 4px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border-radius: 12px;
+        backdrop-filter: blur(5px);
+    }
+    
+    .input-container input:focus {
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.15);
+        outline: none;
+    }
+    
+    .input-container input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .input-container i {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .login-btn {
+        padding: 18px;
+        font-size: 16px;
+        font-weight: 600;
+        background: linear-gradient(135deg, #ffffff, #f0f9ff);
+        color: #1e40af;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        margin-top: 20px;
+    }
+    
+    .login-btn:hover {
+        background: linear-gradient(135deg, #f8fafc, #e0f2fe);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .error-message {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #fecaca;
+        backdrop-filter: blur(5px);
+    }
+}
+
+/* Styly pro malé mobily (max-width: 480px) - Celá obrazovka */
+@media (max-width: 480px) {
+    #login-page {
+        padding: 0;
+        background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+    }
+    
+    .login-container {
+        width: 100%;
+        height: 100vh;
+        padding: 15px;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+    }
+    
+    .login-header {
+        margin-bottom: 30px;
+    }
+    
+    .logo {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+        margin: 0 auto 15px;
+    }
+    
+    .login-header h1 {
+        font-size: 24px;
+        margin-bottom: 6px;
+    }
+    
+    .login-header p {
+        font-size: 14px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+    
+    .input-container input {
+        padding: 16px 45px 16px 18px;
+        font-size: 16px;
+        letter-spacing: 3px;
+    }
+    
+    .login-btn {
+        padding: 16px;
+        font-size: 15px;
+    }
+    
+    /* Ostatní styly pro aplikaci */
     .main-content {
         padding: 20px 10px;
     }
@@ -1417,5 +1771,207 @@ input:focus, select:focus {
     
     .tab {
         justify-content: center;
+    }
+}
+
+/* Styly pro velmi malé mobily (max-width: 360px) */
+@media (max-width: 360px) {
+    .login-container {
+        padding: 10px;
+    }
+    
+    .login-header {
+        margin-bottom: 25px;
+    }
+    
+    .logo {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        margin-bottom: 12px;
+    }
+    
+    .login-header h1 {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+    
+    .login-header p {
+        font-size: 13px;
+    }
+    
+    .form-group {
+        margin-bottom: 18px;
+    }
+    
+    .form-group label {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    
+    .input-container input {
+        padding: 14px 40px 14px 16px;
+        font-size: 15px;
+        letter-spacing: 2px;
+    }
+    
+    .login-btn {
+        padding: 14px;
+        font-size: 14px;
+    }
+}
+
+/* Landscape orientace pro mobily */
+@media (max-width: 768px) and (orientation: landscape) {
+    .login-container {
+        height: 100vh;
+        padding: 10px 20px;
+        justify-content: space-around;
+    }
+    
+    .login-header {
+        margin-bottom: 20px;
+    }
+    
+    .logo {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    
+    .login-header h1 {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+    
+    .login-header p {
+        font-size: 13px;
+    }
+    
+    .login-form {
+        flex: 0;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .input-container input {
+        padding: 12px 40px 12px 16px;
+        font-size: 15px;
+        letter-spacing: 2px;
+    }
+    
+    .login-btn {
+        padding: 12px;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+}
+
+/* Zajištění, že na všech mobilních zařízeních bude celá obrazovka */
+@media (max-width: 768px) {
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+    
+    #login-page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+    }
+    
+    .login-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* Specifické styly pro iOS zařízení */
+.ios-device .login-container {
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height */
+    -webkit-overflow-scrolling: touch;
+}
+
+.ios-device .input-container input {
+    -webkit-appearance: none;
+    border-radius: 12px;
+}
+
+.ios-device .login-btn {
+    -webkit-appearance: none;
+    border-radius: 12px;
+}
+
+/* Specifické styly pro Android zařízení */
+.android-device .login-container {
+    min-height: 100vh;
+}
+
+.android-device .input-container input {
+    border-radius: 12px;
+}
+
+.android-device .login-btn {
+    border-radius: 12px;
+}
+
+/* Touch zařízení optimalizace */
+.touch-device .login-btn {
+    min-height: 44px; /* Minimální velikost pro touch */
+    min-width: 44px;
+}
+
+.touch-device .input-container input {
+    min-height: 44px; /* Minimální velikost pro touch */
+}
+
+.touch-device .logo {
+    cursor: pointer;
+}
+
+/* Zajištění správného zobrazení na všech zařízeních */
+@media (max-width: 768px) {
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    
+    #login-page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height */
+        z-index: 9999;
+    }
+    
+    .login-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
     }
 }
