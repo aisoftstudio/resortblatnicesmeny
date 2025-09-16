@@ -1,0 +1,380 @@
+/**
+ * Styly pro Správa uživatelů - Admin sekce
+ */
+
+/* Správa uživatelů kontejner */
+.sprava-uzivatelu-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+/* Seznam uživatelů */
+.users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Prázdný stav */
+.empty-users {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.empty-users i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    color: #d1d5db;
+}
+
+.empty-users h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #6b7280;
+}
+
+.empty-users p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Karta uživatele */
+.user-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.user-card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+/* Header uživatele */
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.user-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-role.admin {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.user-role.user {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.user-role i {
+    font-size: 10px;
+}
+
+/* Akce uživatele */
+.user-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+}
+
+/* PIN uživatele */
+.user-pin {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-pin-label {
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.user-pin-code {
+    background: #1f2937;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+/* Statistiky uživatele */
+.user-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 16px;
+}
+
+.user-stats-item {
+    text-align: center;
+}
+
+.user-stats-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.user-stats-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Modal pro nového uživatele */
+.new-user-modal .modal-content {
+    max-width: 500px;
+}
+
+.new-user-modal .form-group {
+    margin-bottom: 20px;
+}
+
+.new-user-modal label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.new-user-modal input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.new-user-modal input:focus {
+    outline: none;
+    border-color: #10b981;
+}
+
+/* Výsledek vytvoření uživatele */
+.success-message {
+    text-align: center;
+    padding: 20px;
+    background: #f0fdf4;
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.success-icon {
+    font-size: 48px;
+    color: #10b981;
+    margin-bottom: 16px;
+}
+
+.success-message h3 {
+    color: #065f46;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.success-message p {
+    color: #047857;
+    margin: 0;
+}
+
+/* Zobrazení PINu */
+.pin-display {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.pin-display label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.pin-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.pin-code {
+    background: #1f2937;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    flex: 1;
+    text-align: center;
+}
+
+.pin-note {
+    color: #6b7280;
+    font-size: 14px;
+    text-align: center;
+    margin: 0;
+}
+
+/* Formulář akce */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+/* Responzivní design */
+@media (max-width: 768px) {
+    .user-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .user-actions {
+        align-self: flex-end;
+    }
+    
+    .user-stats {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .pin-container {
+        flex-direction: column;
+    }
+    
+    .pin-code {
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .sprava-uzivatelu-section {
+        padding: 16px;
+    }
+    
+    .user-card {
+        padding: 16px;
+    }
+    
+    .user-name {
+        font-size: 18px;
+    }
+    
+    .user-stats-value {
+        font-size: 20px;
+    }
+    
+    .pin-code {
+        font-size: 16px;
+        letter-spacing: 1px;
+    }
+    
+    .new-user-modal .modal-content {
+        margin: 20px;
+        padding: 20px;
+    }
+}

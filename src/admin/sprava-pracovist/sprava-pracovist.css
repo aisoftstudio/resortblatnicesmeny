@@ -1,0 +1,309 @@
+/**
+ * Styly pro Správa pracovišť - Admin sekce
+ */
+
+/* Správa pracovišť kontejner */
+.sprava-pracovist-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+/* Seznam pracovišť */
+.workplaces-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Prázdný stav */
+.empty-workplaces {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.empty-workplaces i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    color: #d1d5db;
+}
+
+.empty-workplaces h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #6b7280;
+}
+
+.empty-workplaces p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Karta pracoviště */
+.workplace-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.workplace-card:hover {
+    border-color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+/* Header pracoviště */
+.workplace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.workplace-info {
+    flex: 1;
+}
+
+.workplace-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.workplace-description {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.workplace-hours {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.workplace-hours-label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.workplace-hours-time {
+    color: #059669;
+    font-weight: 600;
+}
+
+/* Akce pracoviště */
+.workplace-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+}
+
+/* Statistiky pracoviště */
+.workplace-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 16px;
+}
+
+.workplace-stats-item {
+    text-align: center;
+}
+
+.workplace-stats-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.workplace-stats-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Modal pro pracoviště */
+.workplace-modal .modal-content {
+    max-width: 500px;
+}
+
+.workplace-modal .form-group {
+    margin-bottom: 20px;
+}
+
+.workplace-modal label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.workplace-modal input,
+.workplace-modal textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.workplace-modal input:focus,
+.workplace-modal textarea:focus {
+    outline: none;
+    border-color: #10b981;
+}
+
+.workplace-modal textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.workplace-modal .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.workplace-modal .form-help {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* Checkbox pro pevné hodiny */
+.workplace-modal input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+.workplace-modal label[for="workplace-has-fixed-hours"] {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Sekce s hodinami */
+#workplace-hours-section {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 12px;
+}
+
+/* Formulář akce */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+/* Responzivní design */
+@media (max-width: 768px) {
+    .workplace-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .workplace-actions {
+        align-self: flex-end;
+    }
+    
+    .workplace-stats {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .workplace-modal .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .sprava-pracovist-section {
+        padding: 16px;
+    }
+    
+    .workplace-card {
+        padding: 16px;
+    }
+    
+    .workplace-name {
+        font-size: 18px;
+    }
+    
+    .workplace-stats-value {
+        font-size: 20px;
+    }
+    
+    .workplace-modal .modal-content {
+        margin: 20px;
+        padding: 20px;
+    }
+}

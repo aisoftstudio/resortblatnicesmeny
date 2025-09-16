@@ -1,0 +1,286 @@
+/**
+ * Styly pro Kalendář směn - Admin sekce
+ */
+
+/* Kalendář kontejner */
+.calendar-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+/* Kalendář header */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.calendar-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.calendar-title i {
+    color: #3b82f6;
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 8px;
+}
+
+.calendar-nav button {
+    background: #f3f4f6;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #6b7280;
+}
+
+.calendar-nav button:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+/* Kalendář dny v týdnu */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.calendar-weekday {
+    text-align: center;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 12px 8px;
+    font-size: 14px;
+}
+
+/* Kalendář dny */
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar-day {
+    background: white;
+    border: 2px solid #f3f4f6;
+    border-radius: 8px;
+    padding: 12px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.calendar-day:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+}
+
+.calendar-day.other-month {
+    color: #d1d5db;
+    background: #f9fafb;
+}
+
+.calendar-day.today {
+    border-color: #10b981;
+    background: #ecfdf5;
+}
+
+.calendar-day.selected {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.calendar-day-number {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.shift-indicator {
+    background: #3b82f6;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+/* Směny sekce */
+.shifts-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shifts-section h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+/* Směna karta */
+.shift-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+}
+
+.shift-card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.shift-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.shift-info h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.shift-info h4 i {
+    color: #3b82f6;
+}
+
+.shift-time {
+    color: #6b7280;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.shift-time i {
+    color: #9ca3af;
+}
+
+/* Uživatelé ve směně */
+.shift-users {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 16px;
+}
+
+.shift-users-header {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.shift-users-header i {
+    color: #6b7280;
+}
+
+.users-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.user-tag {
+    background: #3b82f6;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.remove-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.remove-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.no-users {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* Responzivní design */
+@media (max-width: 768px) {
+    .calendar-header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+    
+    .calendar-title {
+        font-size: 20px;
+    }
+    
+    .calendar-day {
+        min-height: 60px;
+        padding: 8px 4px;
+    }
+    
+    .calendar-day-number {
+        font-size: 14px;
+    }
+    
+    .shift-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .shift-info h4 {
+        font-size: 16px;
+    }
+}

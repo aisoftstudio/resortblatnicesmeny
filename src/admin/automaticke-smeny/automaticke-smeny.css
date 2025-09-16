@@ -1,0 +1,294 @@
+/**
+ * Styly pro Automatické směny - Admin sekce
+ */
+
+/* Automatické směny kontejner */
+.automatic-shifts-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+/* Informační karta */
+.automatic-shifts-info {
+    background: #f0f9ff;
+    border: 2px solid #0ea5e9;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.info-card h3 {
+    color: #0c4a6e;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-card h3 i {
+    color: #0ea5e9;
+}
+
+.info-card p {
+    color: #075985;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Seznam automatických pravidel */
+.automatic-shifts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Prázdný stav */
+.empty-workplaces {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.empty-workplaces i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    color: #d1d5db;
+}
+
+.empty-workplaces h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #6b7280;
+}
+
+.empty-workplaces p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Karta automatického pravidla */
+.automatic-rule-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.automatic-rule-card:hover {
+    border-color: #8b5cf6;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+}
+
+/* Header pravidla */
+.automatic-rule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.automatic-rule-info {
+    flex: 1;
+}
+
+.automatic-rule-workplace {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 12px;
+}
+
+.automatic-rule-days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.automatic-day-tag {
+    background: #8b5cf6;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.automatic-rule-time {
+    margin-bottom: 8px;
+}
+
+.automatic-rule-time-label {
+    color: #6b7280;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.automatic-rule-time-value {
+    color: #374151;
+    font-weight: 500;
+}
+
+.automatic-rule-period {
+    color: #6b7280;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.automatic-rule-period i {
+    color: #9ca3af;
+}
+
+/* Akce pravidla */
+.automatic-rule-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Statistiky pravidla */
+.automatic-rule-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 16px;
+}
+
+.automatic-rule-stats-item {
+    text-align: center;
+}
+
+.automatic-rule-stats-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.automatic-rule-stats-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Modal pro vytvoření automatických směn */
+.automatic-shifts-modal .modal-content {
+    max-width: 600px;
+}
+
+.weekdays-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.weekday-checkbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 12px 8px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.weekday-checkbox:hover {
+    border-color: #8b5cf6;
+    background: #faf5ff;
+}
+
+.weekday-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.weekday-checkbox input[type="checkbox"]:checked + .weekday-label {
+    background: #8b5cf6;
+    color: white;
+}
+
+.weekday-label {
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-align: center;
+    min-width: 40px;
+}
+
+/* Formulář akce */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Responzivní design */
+@media (max-width: 768px) {
+    .automatic-rule-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .automatic-rule-actions {
+        align-self: flex-end;
+    }
+    
+    .automatic-rule-stats {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .weekdays-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .automatic-shifts-section {
+        padding: 16px;
+    }
+    
+    .automatic-rule-card {
+        padding: 16px;
+    }
+    
+    .automatic-rule-workplace {
+        font-size: 18px;
+    }
+    
+    .weekdays-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .weekday-checkbox {
+        padding: 8px 4px;
+    }
+    
+    .weekday-label {
+        padding: 6px 8px;
+        font-size: 12px;
+        min-width: 32px;
+    }
+}
