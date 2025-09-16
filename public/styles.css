@@ -1,48 +1,1331 @@
+/* Reset a základní styly */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-/* === src/admin/kalendar-smen/kalendar-smen.css === */
-/**
- * Styly pro Kalendář směn - Admin sekce
- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: white;
+    min-height: 100vh;
+    color: #333;
+}
 
-/* Version badge */
-.version-badge {
-    background: linear-gradient(135deg, #10b981, #059669);
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+    font-size: 48px;
+    color: #3b82f6;
+    margin-bottom: 20px;
+}
+
+.loading-message {
+    font-size: 18px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Obecné třídy */
+.page {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+.page.active {
+    display: block;
+    z-index: 10;
+}
+
+/* Admin stránka s animovaným pozadím */
+#admin-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animované pozadí pro admin */
+#admin-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Animované částice v pozadí pro admin */
+#admin-page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    animation: particles 15s ease-in-out infinite;
+    pointer-events: none;
+}
+
+
+/* Styly pro aktivní taby s decentními barvami */
+#admin-calendar-tab.active {
+    background: rgba(59, 130, 246, 0.15);
+    border-bottom: 3px solid rgba(59, 130, 246, 0.6);
+    color: #1e40af;
+}
+
+#admin-shifts-tab.active {
+    background: rgba(16, 185, 129, 0.15);
+    border-bottom: 3px solid rgba(16, 185, 129, 0.6);
+    color: #047857;
+}
+
+#admin-automatic-tab.active {
+    background: rgba(168, 85, 247, 0.15);
+    border-bottom: 3px solid rgba(168, 85, 247, 0.6);
+    color: #7c3aed;
+}
+
+#admin-workplaces-tab.active {
+    background: rgba(245, 158, 11, 0.15);
+    border-bottom: 3px solid rgba(245, 158, 11, 0.6);
+    color: #d97706;
+}
+
+#admin-users-tab.active {
+    background: rgba(239, 68, 68, 0.15);
+    border-bottom: 3px solid rgba(239, 68, 68, 0.6);
+    color: #dc2626;
+}
+
+/* Hover efekty pro admin taby */
+#admin-calendar-tab:hover:not(.active) {
+    background: rgba(59, 130, 246, 0.08);
+    color: #1e40af;
+}
+
+#admin-shifts-tab:hover:not(.active) {
+    background: rgba(16, 185, 129, 0.08);
+    color: #047857;
+}
+
+#admin-automatic-tab:hover:not(.active) {
+    background: rgba(168, 85, 247, 0.08);
+    color: #7c3aed;
+}
+
+#admin-workplaces-tab:hover:not(.active) {
+    background: rgba(245, 158, 11, 0.08);
+    color: #d97706;
+}
+
+#admin-users-tab:hover:not(.active) {
+    background: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: #3b82f6;
     color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+/* Přihlašovací stránka */
+#login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100vw;
+    padding: 60px 0 40px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+/* Animované pozadí */
+#login-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* Animované částice v pozadí */
+#login-page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    animation: particles 15s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes particles {
+    0%, 100% { 
+        opacity: 0.3;
+        transform: scale(1) rotate(0deg);
+    }
+    50% { 
+        opacity: 0.6;
+        transform: scale(1.1) rotate(180deg);
+    }
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2);
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    position: relative;
+    animation: slideInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center;
+}
+
+@keyframes slideInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 32px;
+    color: white;
+    position: relative;
+    animation: logoPulse 2s ease-in-out infinite;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.logo::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: logoGlow 2s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes logoPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes logoGlow {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.1; }
+}
+
+.login-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.login-form {
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+    text-align: center;
+}
+
+.form-help {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.admin-protected {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: #10b981;
+    font-size: 14px;
+    cursor: help;
+}
+
+.input-container {
+    position: relative;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 16px 50px 16px 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 4px;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.input-container input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.input-container input:hover {
+    border-color: #667eea;
+    transform: translateY(-1px);
+}
+
+.input-container i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
     font-weight: 600;
-    margin-top: 8px;
-    display: inline-block;
-    animation: pulse 2s infinite;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+.login-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2, #667eea);
+}
+
+.login-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.login-btn:disabled::before {
+    display: none;
+}
+
+/* Vylepšené loading animace */
+.btn-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.btn-loading i {
+    animation: spin 1s linear infinite;
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }
 
-/* Kalendář kontejner */
-.calendar-section {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* Kalendář header */
-.calendar-header {
+/* Animace pro error zprávy */
+.error-message {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.error-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.test-pins {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 30px;
+    text-align: center;
+}
+
+.test-pins h3 {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.pin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pin-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.pin-item i {
+    font-size: 16px;
+}
+
+.admin-icon {
+    color: #10b981;
+}
+
+.user-icon {
+    color: #3b82f6;
+}
+
+.pin-code {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.pin-role {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Header - Moderní responzivní design */
+.header {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid #f3f4f6;
+    height: 80px;
+    transition: all 0.3s ease;
 }
 
-.calendar-title {
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+}
+
+.logo-small {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.logo-small:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.header-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.header-info h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.header-info p {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Hamburger menu pro mobilní zařízení */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-toggle.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Mobilní menu */
+.mobile-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.mobile-menu.active {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mobile-menu-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(4px);
+}
+
+.mobile-menu-item i {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Mobilní menu divider */
+.mobile-menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 8px 0;
+}
+
+/* Mobilní sekce tlačítka */
+.mobile-section-item {
+    position: relative;
+}
+
+.mobile-section-item.active {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.mobile-section-item.active::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background: #10b981;
+    border-radius: 50%;
+}
+
+/* Vylepšené tlačítko odhlášení */
+.btn-logout {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-logout:active {
+    transform: translateY(0);
+}
+
+
+/* Hlavní obsah */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    background: #f8fafc;
+    min-height: calc(100vh - 80px);
+}
+
+/* Moderní design systém pro admin sekce */
+.admin-section {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+    border-radius: 16px 16px 0 0;
+}
+
+/* Moderní karty */
+.modern-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modern-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    border-color: #e2e8f0;
+}
+
+.modern-card:hover::before {
+    opacity: 1;
+}
+
+/* Moderní hlavičky karet */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-title i {
+    color: #3b82f6;
+    font-size: 18px;
+}
+
+.card-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Moderní tlačítka */
+.modern-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.modern-btn:hover::before {
+    left: 100%;
+}
+
+.modern-btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.modern-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.modern-btn-secondary {
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.modern-btn-secondary:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.modern-btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.modern-btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.modern-btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.modern-btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Moderní tagy a labely */
+.modern-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modern-tag-admin {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+}
+
+.modern-tag-user {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.modern-tag-workplace {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.modern-tag-shift {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+}
+
+/* Moderní prázdný stav */
+.modern-empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #64748b;
+}
+
+.modern-empty-state i {
+    font-size: 72px;
+    margin-bottom: 24px;
+    color: #cbd5e1;
+    opacity: 0.8;
+}
+
+.modern-empty-state h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #475569;
+}
+
+.modern-empty-state p {
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Moderní filtry */
+.modern-filter {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.modern-filter-label {
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+}
+
+.modern-filter-label i {
+    color: #3b82f6;
+    font-size: 18px;
+}
+
+.modern-filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.modern-filter-btn {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.modern-filter-btn:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background: #eff6ff;
+    transform: translateY(-1px);
+}
+
+.modern-filter-btn.active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-color: #3b82f6;
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.modern-filter-btn i {
+    font-size: 14px;
+}
+
+/* Moderní select elementy pro filtrování */
+.modern-filter {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.modern-filter-label {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    margin-bottom: 0;
+}
+
+.modern-filter-label i {
+    color: #3b82f6;
+    font-size: 18px;
+}
+
+.modern-filter-selects {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-select-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+}
+
+.filter-select-group label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.filter-select-group label i {
+    color: #3b82f6;
+    font-size: 14px;
+}
+
+.modern-select {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 160px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.modern-select:hover {
+    border-color: #3b82f6;
+    background-color: #f8fafc;
+}
+
+.modern-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modern-select option {
+    padding: 8px;
+    color: #374151;
+}
+
+/* Responsivní design pro select elementy */
+@media (max-width: 768px) {
+    .modern-filter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .modern-filter-selects {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+    
+    .filter-select-group {
+        min-width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .modern-select {
+        min-width: 100%;
+    }
+}
+
+/* Moderní sekce - přepsání starých stylů */
+.admin-section .section-header {
+    display: none; /* Skryjeme staré section-header */
+}
+
+.admin-section .card-header {
+    margin-bottom: 24px;
+}
+
+.admin-section .card-title {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.admin-section .card-subtitle {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 0;
+}
+
+/* Moderní info karta */
+.info-card {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #3b82f6;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.info-card .card-title {
+    color: #1e40af;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.info-card .card-title i {
+    color: #3b82f6;
+}
+
+.info-card .card-subtitle {
+    color: #1e40af;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.info-card p {
+    color: #1e40af;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Moderní seznamy */
+.shifts-list,
+.automatic-shifts-list,
+.workplaces-list,
+.users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Moderní prázdné stavy */
+.empty-shifts,
+.empty-workplaces,
+.empty-users {
+    text-align: center;
+    padding: 80px 20px;
+    color: #64748b;
+}
+
+.empty-shifts i,
+.empty-workplaces i,
+.empty-users i {
+    font-size: 72px;
+    margin-bottom: 24px;
+    color: #cbd5e1;
+    opacity: 0.8;
+}
+
+.empty-shifts h3,
+.empty-workplaces h3,
+.empty-users h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #475569;
+}
+
+.empty-shifts p,
+.empty-workplaces p,
+.empty-users p {
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
     font-size: 24px;
     font-weight: 600;
     color: #1f2937;
@@ -51,8 +1334,43 @@
     gap: 12px;
 }
 
-.calendar-title i {
-    color: #3b82f6;
+/* Moderní kalendář */
+.calendar {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    overflow: hidden;
+    position: relative;
+}
+
+.calendar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    border-radius: 16px 16px 0 0;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #f1f5f9;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+.calendar-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .calendar-nav {
@@ -61,177 +1379,345 @@
 }
 
 .calendar-nav button {
-    background: #f3f4f6;
-    border: none;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #e2e8f0;
+    background: white;
     border-radius: 8px;
-    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-    color: #6b7280;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #64748b;
 }
 
 .calendar-nav button:hover {
-    background: #e5e7eb;
-    color: #374151;
+    background: #f8fafc;
+    border-color: #3b82f6;
+    color: #3b82f6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
-/* Kalendář dny v týdnu */
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
 }
 
 .calendar-weekday {
+    padding: 16px 8px;
     text-align: center;
-    font-weight: 600;
-    color: #6b7280;
-    padding: 12px 8px;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* Kalendář dny */
 .calendar-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
 }
 
 .calendar-day {
-    background: white;
-    border: 2px solid #f3f4f6;
-    border-radius: 8px;
+    min-height: 70px;
     padding: 12px 8px;
+    border: 1px solid #f1f5f9;
     cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 80px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    background: white;
 }
 
 .calendar-day:hover {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
     border-color: #3b82f6;
-    background: #f8fafc;
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
 .calendar-day.other-month {
-    color: #d1d5db;
-    background: #f9fafb;
+    background: #f8fafc;
+    color: #94a3b8;
+    opacity: 0.6;
 }
 
 .calendar-day.today {
-    border-color: #10b981;
-    background: #ecfdf5;
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    border-color: #3b82f6;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
 .calendar-day.selected {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    color: #1d4ed8;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .calendar-day-number {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.calendar-day-shifts {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
 }
 
 .shift-indicator {
-    background: #3b82f6;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
     font-size: 10px;
-    padding: 2px 6px;
+    padding: 4px 8px;
     border-radius: 12px;
-    font-weight: 500;
-    margin-top: 4px;
-}
-
-/* Směny sekce */
-.shifts-section {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.shifts-section h3 {
-    font-size: 20px;
+    text-align: center;
     font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #f3f4f6;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    letter-spacing: 0.3px;
 }
 
-/* Směna karta */
-.shift-card {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
-    transition: all 0.2s ease;
-}
-
-.shift-card:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-}
-
-.shift-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-}
-
-.shift-info h4 {
+/* Směny */
+.shifts-section h3 {
     font-size: 18px;
     font-weight: 600;
     color: #1f2937;
-    margin-bottom: 8px;
+    margin-bottom: 20px;
+}
+
+.shifts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Kompaktní shift karty */
+.shift-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+}
+
+.shift-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.shift-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #e2e8f0;
+}
+
+.shift-card:hover::before {
+    opacity: 1;
+}
+
+/* Kompaktní shift obsah */
+.shift-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.shift-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.shift-workplace {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.shift-info h4 i {
+.shift-workplace i {
     color: #3b82f6;
+    font-size: 14px;
 }
 
 .shift-time {
-    color: #6b7280;
+    color: #64748b;
     font-size: 14px;
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
 .shift-time i {
-    color: #9ca3af;
+    color: #6b7280;
+    font-size: 12px;
 }
 
-/* Uživatelé ve směně */
-.shift-users {
-    border-top: 1px solid #e5e7eb;
-    padding-top: 16px;
-}
-
-.shift-users-header {
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 12px;
+/* Status indikátor */
+.shift-status {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.shift-users-header i {
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.available {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.status-badge.occupied {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+/* Disabled tlačítka */
+.modern-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.modern-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Klikací shift karty */
+.clickable-shift {
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.clickable-shift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    border-color: #3b82f6;
+}
+
+.clickable-shift:hover::before {
+    opacity: 1;
+}
+
+/* Ikona odkazu */
+.shift-link-icon {
+    color: #64748b;
+    font-size: 12px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.clickable-shift:hover .shift-link-icon {
+    color: #3b82f6;
+    opacity: 1;
+    transform: translateX(2px);
+}
+
+/* Management shift karty používají stejný styl jako pracoviště */
+
+/* Informace o uživateli v admin kartách */
+.shift-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.shift-user-info .user-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.shift-user-info .modern-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+}
+
+.shift-user-info .modern-btn i {
+    font-size: 10px;
+}
+
+/* Warning tlačítko */
+.modern-btn-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.modern-btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    background: linear-gradient(135deg, #d97706, #b45309);
+}
+
+.modern-btn-warning:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+/* Skrytí starých elementů */
+.shift-header,
+.shift-actions,
+.shift-users {
+    display: none;
+}
+
+.shift-users {
+    border-top: 1px solid #f3f4f6;
+    padding-top: 16px;
+}
+
+.shift-users-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
     color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .users-list {
@@ -241,1242 +1727,365 @@
 }
 
 .user-tag {
-    background: #3b82f6;
-    color: white;
-    padding: 6px 12px;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    padding: 8px 16px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 13px;
+    color: #475569;
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.remove-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    transition: all 0.2s ease;
-}
-
-.remove-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.no-users {
-    color: #9ca3af;
-    font-style: italic;
-}
-
-/* Responzivní design */
-@media (max-width: 768px) {
-    .calendar-header {
-        flex-direction: column;
-        gap: 16px;
-        text-align: center;
-    }
-    
-    .calendar-title {
-        font-size: 20px;
-    }
-    
-    .calendar-day {
-        min-height: 60px;
-        padding: 8px 4px;
-    }
-    
-    .calendar-day-number {
-        font-size: 14px;
-    }
-    
-    .shift-header {
-        flex-direction: column;
-        gap: 12px;
-    }
-    
-    .shift-info h4 {
-        font-size: 16px;
-    }
-}
-
-
-/* === src/admin/sprava-smen/sprava-smen.css === */
-/**
- * Styly pro Správa směn - Admin sekce
- */
-
-/* Správa směn kontejner */
-.admin-shifts-section {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
-}
-
-/* Filtrování podle pracoviště */
-.shifts-filter {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 24px;
-}
-
-.filter-label {
     font-weight: 600;
-    color: #374151;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.filter-label i {
-    color: #6b7280;
-}
-
-.filter-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.filter-btn {
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 10px 16px;
-    cursor: pointer;
+    border: 1px solid #e2e8f0;
     transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #6b7280;
 }
 
-.filter-btn:hover {
+.user-tag:hover {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
     border-color: #3b82f6;
     color: #3b82f6;
-    background: #eff6ff;
+    transform: translateY(-1px);
 }
 
-.filter-btn.active {
-    background: #3b82f6;
-    border-color: #3b82f6;
-    color: white;
-}
-
-.filter-btn i {
-    font-size: 12px;
-}
-
-/* Seznam směn */
-.admin-shifts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Prázdný stav */
-.empty-shifts {
-    text-align: center;
-    padding: 60px 20px;
-    color: #9ca3af;
-}
-
-.empty-shifts i {
-    font-size: 64px;
-    margin-bottom: 20px;
-    color: #d1d5db;
-}
-
-.empty-shifts h3 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #6b7280;
-}
-
-.empty-shifts p {
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-/* Směna karta */
-.shift-card {
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-.shift-card:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-}
-
-.shift-card.past-shift {
-    opacity: 0.7;
-    background: #f9fafb;
-    border-color: #d1d5db;
-}
-
-.shift-card.past-shift:hover {
-    border-color: #9ca3af;
-    box-shadow: none;
-}
-
-/* Informace o směně */
-.shift-info {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.shift-date,
-.shift-time,
-.shift-position {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #374151;
-}
-
-.shift-date i,
-.shift-time i,
-.shift-position i {
-    color: #6b7280;
-    width: 16px;
-    text-align: center;
-}
-
-.shift-date {
-    font-weight: 600;
-}
-
-.shift-time {
-    color: #059669;
-}
-
-.shift-position {
-    color: #3b82f6;
-}
-
-/* Uživatelé ve směně */
-.shift-users {
-    border-top: 1px solid #e5e7eb;
-    padding-top: 16px;
-    margin-bottom: 16px;
-}
-
-.users-header {
-    margin-bottom: 12px;
-}
-
-.users-count {
-    font-weight: 600;
-    color: #374151;
-    font-size: 14px;
-}
-
-.users-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.user-item {
-    background: #f3f4f6;
-    border: 1px solid #d1d5db;
-    border-radius: 20px;
-    padding: 6px 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-}
-
-.user-name {
-    color: #374151;
-    font-weight: 500;
-}
-
-.btn-sm {
-    padding: 4px 8px;
-    font-size: 12px;
-    border-radius: 4px;
-}
-
-.btn-outline {
-    background: transparent;
-    border: 1px solid #d1d5db;
-    color: #6b7280;
-}
-
-.btn-outline:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
-    color: #374151;
-}
-
-.no-users {
-    color: #9ca3af;
-    font-style: italic;
-    font-size: 14px;
-}
-
-/* Akce směny */
-.shift-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-}
-
-.btn-danger {
-    background: #ef4444;
-    color: white;
+.user-tag .remove-btn {
+    background: none;
     border: none;
-}
-
-.btn-danger:hover {
-    background: #dc2626;
-}
-
-/* Responzivní design */
-@media (max-width: 768px) {
-    .shifts-filter {
-        padding: 16px;
-    }
-    
-    .filter-buttons {
-        flex-direction: column;
-    }
-    
-    .filter-btn {
-        justify-content: center;
-    }
-    
-    .shift-info {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-    
-    .shift-card {
-        padding: 16px;
-    }
-    
-    .users-list {
-        flex-direction: column;
-    }
-    
-    .user-item {
-        justify-content: space-between;
-    }
-    
-    .shift-actions {
-        justify-content: center;
-    }
-}
-
-@media (max-width: 480px) {
-    .admin-shifts-section {
-        padding: 16px;
-    }
-    
-    .empty-shifts {
-        padding: 40px 16px;
-    }
-    
-    .empty-shifts i {
-        font-size: 48px;
-    }
-    
-    .empty-shifts h3 {
-        font-size: 20px;
-    }
-    
-    .empty-shifts p {
-        font-size: 14px;
-    }
-}
-
-
-/* === src/admin/automaticke-smeny/automaticke-smeny.css === */
-/**
- * Styly pro Automatické směny - Admin sekce
- */
-
-/* Automatické směny kontejner */
-.automatic-shifts-section {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
-}
-
-/* Informační karta */
-.automatic-shifts-info {
-    background: #f0f9ff;
-    border: 2px solid #0ea5e9;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 24px;
-}
-
-.info-card h3 {
-    color: #0c4a6e;
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.info-card h3 i {
-    color: #0ea5e9;
-}
-
-.info-card p {
-    color: #075985;
-    line-height: 1.5;
-    margin: 0;
-}
-
-/* Seznam automatických pravidel */
-.automatic-shifts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Prázdný stav */
-.empty-workplaces {
-    text-align: center;
-    padding: 60px 20px;
-    color: #9ca3af;
-}
-
-.empty-workplaces i {
-    font-size: 64px;
-    margin-bottom: 20px;
-    color: #d1d5db;
-}
-
-.empty-workplaces h3 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #6b7280;
-}
-
-.empty-workplaces p {
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-/* Karta automatického pravidla */
-.automatic-rule-card {
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    transition: all 0.2s ease;
-}
-
-.automatic-rule-card:hover {
-    border-color: #8b5cf6;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
-}
-
-/* Header pravidla */
-.automatic-rule-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-}
-
-.automatic-rule-info {
-    flex: 1;
-}
-
-.automatic-rule-workplace {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 12px;
-}
-
-.automatic-rule-days {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
-.automatic-day-tag {
-    background: #8b5cf6;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 16px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.automatic-rule-time {
-    margin-bottom: 8px;
-}
-
-.automatic-rule-time-label {
-    color: #6b7280;
-    font-size: 14px;
-    margin-right: 8px;
-}
-
-.automatic-rule-time-value {
-    color: #374151;
-    font-weight: 500;
-}
-
-.automatic-rule-period {
-    color: #6b7280;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.automatic-rule-period i {
-    color: #9ca3af;
-}
-
-/* Akce pravidla */
-.automatic-rule-actions {
-    display: flex;
-    gap: 8px;
-}
-
-/* Statistiky pravidla */
-.automatic-rule-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    border-top: 1px solid #e5e7eb;
-    padding-top: 16px;
-}
-
-.automatic-rule-stats-item {
-    text-align: center;
-}
-
-.automatic-rule-stats-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 4px;
-}
-
-.automatic-rule-stats-label {
-    font-size: 12px;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Modal pro vytvoření automatických směn */
-.automatic-shifts-modal .modal-content {
-    max-width: 600px;
-}
-
-.weekdays-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 12px;
-    margin-top: 12px;
-}
-
-.weekday-checkbox {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    color: #ef4444;
     cursor: pointer;
-    padding: 12px 8px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.weekday-checkbox:hover {
-    border-color: #8b5cf6;
-    background: #faf5ff;
-}
-
-.weekday-checkbox input[type="checkbox"] {
-    display: none;
-}
-
-.weekday-checkbox input[type="checkbox"]:checked + .weekday-label {
-    background: #8b5cf6;
-    color: white;
-}
-
-.weekday-label {
-    background: #f3f4f6;
-    color: #6b7280;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    text-align: center;
-    min-width: 40px;
-}
-
-/* Formulář akce */
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 24px;
-    padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
-}
-
-/* Responzivní design */
-@media (max-width: 768px) {
-    .automatic-rule-header {
-        flex-direction: column;
-        gap: 16px;
-    }
-    
-    .automatic-rule-actions {
-        align-self: flex-end;
-    }
-    
-    .automatic-rule-stats {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-    
-    .weekdays-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 480px) {
-    .automatic-shifts-section {
-        padding: 16px;
-    }
-    
-    .automatic-rule-card {
-        padding: 16px;
-    }
-    
-    .automatic-rule-workplace {
-        font-size: 18px;
-    }
-    
-    .weekdays-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-    
-    .weekday-checkbox {
-        padding: 8px 4px;
-    }
-    
-    .weekday-label {
-        padding: 6px 8px;
-        font-size: 12px;
-        min-width: 32px;
-    }
-}
-
-
-/* === src/admin/sprava-pracovist/sprava-pracovist.css === */
-/**
- * Styly pro Správa pracovišť - Admin sekce
- */
-
-/* Správa pracovišť kontejner */
-.sprava-pracovist-section {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
-}
-
-/* Seznam pracovišť */
-.workplaces-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Prázdný stav */
-.empty-workplaces {
-    text-align: center;
-    padding: 60px 20px;
-    color: #9ca3af;
-}
-
-.empty-workplaces i {
-    font-size: 64px;
-    margin-bottom: 20px;
-    color: #d1d5db;
-}
-
-.empty-workplaces h3 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #6b7280;
-}
-
-.empty-workplaces p {
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-/* Karta pracoviště */
-.workplace-card {
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    transition: all 0.2s ease;
-}
-
-.workplace-card:hover {
-    border-color: #10b981;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
-}
-
-/* Header pracoviště */
-.workplace-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-}
-
-.workplace-info {
-    flex: 1;
-}
-
-.workplace-name {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 8px;
-}
-
-.workplace-description {
-    color: #6b7280;
-    font-size: 14px;
-    margin-bottom: 8px;
-    line-height: 1.4;
-}
-
-.workplace-hours {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-}
-
-.workplace-hours-label {
-    color: #6b7280;
-    font-weight: 500;
-}
-
-.workplace-hours-time {
-    color: #059669;
-    font-weight: 600;
-}
-
-/* Akce pracoviště */
-.workplace-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-primary {
-    background: #3b82f6;
-    color: white;
-    border: none;
-}
-
-.btn-primary:hover {
-    background: #2563eb;
-}
-
-.btn-danger {
-    background: #ef4444;
-    color: white;
-    border: none;
-}
-
-.btn-danger:hover {
-    background: #dc2626;
-}
-
-.btn-sm {
-    padding: 6px 12px;
-    font-size: 12px;
-    border-radius: 6px;
-}
-
-/* Statistiky pracoviště */
-.workplace-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    border-top: 1px solid #e5e7eb;
-    padding-top: 16px;
-}
-
-.workplace-stats-item {
-    text-align: center;
-}
-
-.workplace-stats-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 4px;
-}
-
-.workplace-stats-label {
-    font-size: 12px;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Modal pro pracoviště */
-.workplace-modal .modal-content {
-    max-width: 500px;
-}
-
-.workplace-modal .form-group {
-    margin-bottom: 20px;
-}
-
-.workplace-modal label {
-    display: block;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 8px;
-}
-
-.workplace-modal input,
-.workplace-modal textarea {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.2s ease;
-}
-
-.workplace-modal input:focus,
-.workplace-modal textarea:focus {
-    outline: none;
-    border-color: #10b981;
-}
-
-.workplace-modal textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-.workplace-modal .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-
-.workplace-modal .form-help {
-    font-size: 12px;
-    color: #6b7280;
-    margin-top: 4px;
-}
-
-/* Checkbox pro pevné hodiny */
-.workplace-modal input[type="checkbox"] {
-    width: auto;
-    margin-right: 8px;
-}
-
-.workplace-modal label[for="workplace-has-fixed-hours"] {
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-/* Sekce s hodinami */
-#workplace-hours-section {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 16px;
-    margin-top: 12px;
-}
-
-/* Formulář akce */
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 24px;
-    padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
-}
-
-.btn-success {
-    background: #10b981;
-    color: white;
-    border: none;
-}
-
-.btn-success:hover {
-    background: #059669;
-}
-
-.btn-secondary {
-    background: #6b7280;
-    color: white;
-    border: none;
-}
-
-.btn-secondary:hover {
-    background: #4b5563;
-}
-
-/* Responzivní design */
-@media (max-width: 768px) {
-    .workplace-header {
-        flex-direction: column;
-        gap: 16px;
-    }
-    
-    .workplace-actions {
-        align-self: flex-end;
-    }
-    
-    .workplace-stats {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-    
-    .workplace-modal .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 480px) {
-    .sprava-pracovist-section {
-        padding: 16px;
-    }
-    
-    .workplace-card {
-        padding: 16px;
-    }
-    
-    .workplace-name {
-        font-size: 18px;
-    }
-    
-    .workplace-stats-value {
-        font-size: 20px;
-    }
-    
-    .workplace-modal .modal-content {
-        margin: 20px;
-        padding: 20px;
-    }
-}
-
-
-/* === src/admin/sprava-uzivatelu/sprava-uzivatelu.css === */
-/**
- * Styly pro Správa uživatelů - Admin sekce
- */
-
-/* Správa uživatelů kontejner */
-.sprava-uzivatelu-section {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
-}
-
-/* Seznam uživatelů */
-.users-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Prázdný stav */
-.empty-users {
-    text-align: center;
-    padding: 60px 20px;
-    color: #9ca3af;
-}
-
-.empty-users i {
-    font-size: 64px;
-    margin-bottom: 20px;
-    color: #d1d5db;
-}
-
-.empty-users h3 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #6b7280;
-}
-
-.empty-users p {
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-/* Karta uživatele */
-.user-card {
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    transition: all 0.2s ease;
-}
-
-.user-card:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-}
-
-/* Header uživatele */
-.user-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-}
-
-.user-info {
-    flex: 1;
-}
-
-.user-name {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 8px;
-}
-
-.user-role {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    border-radius: 16px;
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.user-role.admin {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.user-role.user {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.user-role i {
+    padding: 0;
     font-size: 10px;
 }
 
-/* Akce uživatele */
-.user-actions {
+.user-tag .remove-btn:hover {
+    color: #dc2626;
+}
+
+.no-users {
+    color: #9ca3af;
+    font-size: 14px;
+    font-style: italic;
+}
+
+/* Moderní taby */
+.tabs {
     display: flex;
-    gap: 8px;
+    background: white;
+    border-radius: 12px;
+    padding: 8px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
 }
 
-.btn-danger {
-    background: #ef4444;
-    color: white;
+.tab {
+    padding: 12px 24px;
+    background: none;
     border: none;
-}
-
-.btn-danger:hover {
-    background: #dc2626;
-}
-
-.btn-sm {
-    padding: 6px 12px;
-    font-size: 12px;
-    border-radius: 6px;
-}
-
-/* PIN uživatele */
-.user-pin {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.tab:hover::before {
+    left: 100%;
+}
+
+.tab:hover {
+    color: #3b82f6;
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.tab.active {
+    color: white;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.tab.active::before {
+    display: none;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Styly pro obsah admin sekcí s decentními barvami */
+#admin-calendar-content.active {
+    background: rgba(59, 130, 246, 0.05);
+    border-left: 4px solid rgba(59, 130, 246, 0.3);
+    border-right: 4px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+}
+
+#admin-shifts-content.active {
+    background: rgba(16, 185, 129, 0.05);
+    border-left: 4px solid rgba(16, 185, 129, 0.3);
+    border-right: 4px solid rgba(16, 185, 129, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+}
+
+#admin-automatic-content.active {
+    background: rgba(168, 85, 247, 0.05);
+    border-left: 4px solid rgba(168, 85, 247, 0.3);
+    border-right: 4px solid rgba(168, 85, 247, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.1);
+}
+
+#admin-workplaces-content.active {
+    background: rgba(245, 158, 11, 0.05);
+    border-left: 4px solid rgba(245, 158, 11, 0.3);
+    border-right: 4px solid rgba(245, 158, 11, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+}
+
+#admin-users-content.active {
+    background: rgba(239, 68, 68, 0.05);
+    border-left: 4px solid rgba(239, 68, 68, 0.3);
+    border-right: 4px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+}
+
+/* Animace pro přechody mezi admin sekcemi */
+.tab-content {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.tab-content.active {
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeInContent 0.4s ease-out;
+}
+
+@keyframes fadeInContent {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Modaly */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+    border-radius: 16px 16px 0 0;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 0;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.user-pin-label {
-    color: #6b7280;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.user-pin-code {
-    background: #1f2937;
-    color: white;
-    padding: 6px 12px;
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 6px;
-    font-family: 'Courier New', monospace;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 2px;
+    transition: all 0.2s ease;
 }
 
-/* Statistiky uživatele */
-.user-stats {
+.close-btn:hover {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.modal form {
+    padding: 0 24px 24px;
+}
+
+.form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    border-top: 1px solid #e5e7eb;
-    padding-top: 16px;
+    gap: 16px;
 }
 
-.user-stats-item {
-    text-align: center;
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
 }
 
-.user-stats-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 4px;
+.modal-actions .btn {
+    min-width: 100px;
 }
 
-.user-stats-label {
-    font-size: 12px;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Modal pro nového uživatele */
-.new-user-modal .modal-content {
-    max-width: 500px;
-}
-
-.new-user-modal .form-group {
-    margin-bottom: 20px;
-}
-
-.new-user-modal label {
-    display: block;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 8px;
-}
-
-.new-user-modal input {
+/* Moderní formuláře */
+input, select, textarea {
     width: 100%;
-    padding: 12px;
+    padding: 14px 18px;
     border: 2px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 14px;
-    transition: border-color 0.2s ease;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    color: #1e293b;
 }
 
-.new-user-modal input:focus {
+input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: #10b981;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
 }
 
-/* Výsledek vytvoření uživatele */
+input:hover, select:hover, textarea:hover {
+    border-color: #cbd5e1;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Success message */
 .success-message {
     text-align: center;
-    padding: 20px;
-    background: #f0fdf4;
-    border: 2px solid #10b981;
-    border-radius: 12px;
-    margin-bottom: 20px;
+    padding: 24px;
 }
 
 .success-icon {
-    font-size: 48px;
+    width: 64px;
+    height: 64px;
+    background: #d1fae5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 32px;
     color: #10b981;
-    margin-bottom: 16px;
 }
 
 .success-message h3 {
-    color: #065f46;
     font-size: 20px;
     font-weight: 600;
+    color: #1f2937;
     margin-bottom: 8px;
 }
 
 .success-message p {
-    color: #047857;
-    margin: 0;
+    color: #6b7280;
+    margin-bottom: 24px;
 }
 
-/* Zobrazení PINu */
 .pin-display {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
     padding: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .pin-display label {
     display: block;
-    font-weight: 600;
+    font-weight: 500;
     color: #374151;
     margin-bottom: 12px;
 }
@@ -1485,124 +2094,1074 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 12px;
 }
 
-.pin-code {
-    background: #1f2937;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-family: 'Courier New', monospace;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 3px;
+.pin-container .pin-code {
     flex: 1;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    font-weight: 600;
     text-align: center;
+    letter-spacing: 2px;
 }
 
 .pin-note {
     color: #6b7280;
-    font-size: 14px;
-    text-align: center;
-    margin: 0;
+    font-size: 12px;
+    margin-top: 8px;
 }
 
-/* Formulář akce */
-.modal-actions {
+/* Správa uživatelů */
+.users-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.user-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #007bff;
+    transition: all 0.3s ease;
+}
+
+.user-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.user-header {
     display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 24px;
-    padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
 }
 
-.btn-success {
-    background: #10b981;
-    color: white;
-    border: none;
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
-.btn-success:hover {
-    background: #059669;
+.user-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
 }
 
-.btn-secondary {
-    background: #6b7280;
-    color: white;
-    border: none;
+.user-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex: 1;
 }
 
-.btn-secondary:hover {
-    background: #4b5563;
+.user-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    flex-shrink: 0;
 }
 
-.btn-primary {
-    background: #3b82f6;
-    color: white;
-    border: none;
+.user-role.admin {
+    background: #fff3cd;
+    color: #856404;
 }
 
-.btn-primary:hover {
-    background: #2563eb;
+.user-role.user {
+    background: #d1ecf1;
+    color: #0c5460;
 }
 
-/* Responzivní design */
+.user-pin {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.user-pin-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.user-pin-code {
+    font-family: 'Courier New', monospace;
+    background: #f8f9fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #007bff;
+    border: 1px solid #dee2e6;
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+
+.empty-users {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+}
+
+.empty-users i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-users h3 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.empty-users p {
+    font-size: 0.9rem;
+}
+
+/* Správa pracovišť */
+.workplaces-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.workplace-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #28a745;
+    transition: all 0.3s ease;
+}
+
+.workplace-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.workplace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.workplace-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.workplace-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.workplace-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex: 1;
+}
+
+/* Sloupce pro směny */
+.shift-columns {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.shift-column {
+    display: flex;
+    align-items: center;
+}
+
+.workplace-column {
+    width: 200px; /* Šířka na ~20 znaků */
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.time-column {
+    width: 120px; /* Šířka pro čas */
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #10b981; /* Zelená barva */
+    flex-shrink: 0;
+}
+
+.date-column {
+    width: 100px; /* Šířka pro datum */
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+/* Sloupce pro pracoviště */
+.workplace-columns {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.workplace-name-column {
+    width: 200px; /* Šířka na ~20 znaků */
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.workplace-time-column {
+    width: 120px; /* Šířka pro čas */
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+/* Responzivní styly pro sloupce směn */
 @media (max-width: 768px) {
-    .user-header {
-        flex-direction: column;
-        gap: 16px;
+    .shift-columns {
+        gap: 12px;
     }
     
-    .user-actions {
-        align-self: flex-end;
+    .workplace-column {
+        width: 150px;
+        font-size: 1.2rem;
     }
     
-    .user-stats {
+    .time-column {
+        width: 100px;
+        font-size: 0.85rem;
+    }
+    
+    .date-column {
+        width: 80px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Responzivní styly pro sloupce pracovišť */
+@media (max-width: 768px) {
+    .workplace-columns {
+        gap: 12px;
+    }
+    
+    .workplace-name-column {
+        width: 150px;
+        font-size: 1.2rem;
+    }
+    
+    .workplace-time-column {
+        width: 100px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Sloupce pro automatické směny */
+.automatic-columns {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.automatic-column {
+    display: flex;
+    align-items: center;
+}
+
+.automatic-column.workplace-column {
+    width: 200px; /* Šířka na ~20 znaků */
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.automatic-column.time-column {
+    width: 120px; /* Šířka pro čas */
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #10b981; /* Zelená barva */
+    flex-shrink: 0;
+}
+
+.automatic-column.days-column {
+    width: 150px; /* Šířka pro dny */
+    flex-shrink: 0;
+}
+
+.automatic-column.period-column {
+    width: 120px; /* Šířka pro období */
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.automatic-day-tag {
+    display: inline-block;
+    background: #e2e8f0;
+    color: #475569;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-right: 4px;
+}
+
+/* Responzivní styly pro sloupce automatických směn */
+@media (max-width: 768px) {
+    .automatic-columns {
+        gap: 12px;
+    }
+    
+    .automatic-column.workplace-column {
+        width: 150px;
+        font-size: 1.2rem;
+    }
+    
+    .automatic-column.time-column {
+        width: 100px;
+        font-size: 0.85rem;
+    }
+    
+    .automatic-column.days-column {
+        width: 120px;
+    }
+    
+    .automatic-column.period-column {
+        width: 100px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Sloupce pro uživatele */
+.user-columns {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.user-column {
+    display: flex;
+    align-items: center;
+}
+
+.user-name-column {
+    width: 200px; /* Šířka na ~20 znaků */
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex: 1;
+}
+
+.user-role-column {
+    width: 100px; /* Šířka pro roli */
+    flex-shrink: 0;
+}
+
+.user-pin-column {
+    width: 100px; /* Šířka pro PIN */
+    flex-shrink: 0;
+}
+
+/* Responzivní styly pro sloupce uživatelů */
+@media (max-width: 768px) {
+    .user-columns {
+        gap: 12px;
+    }
+    
+    .user-name-column {
+        width: 150px;
+        font-size: 1.2rem;
+    }
+    
+    .user-role-column {
+        width: 80px;
+    }
+    
+    .user-pin-column {
+        width: 80px;
+    }
+}
+
+
+.workplace-hours {
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+.workplace-date {
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+.workplace-date-text {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.workplace-hours-time {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.time-separator {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Pevný čas - zelený */
+.time-start.fixed,
+.time-end.fixed {
+    color: #10b981;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+/* Nepevný čas - šedý */
+.time-start.not-fixed,
+.time-end.not-fixed {
+    color: #9ca3af;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.workplace-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Status badge v workplace kartách */
+.workplace-card .status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.workplace-card .status-badge.available {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.workplace-card .status-badge.occupied {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+/* Informace o uživateli v workplace kartách */
+.workplace-card .shift-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.workplace-card .shift-user-info .user-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.workplace-card .shift-user-info .modern-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+}
+
+.workplace-card .shift-user-info .modern-btn i {
+    font-size: 10px;
+}
+
+.workplace-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
+}
+
+.workplace-stats-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.workplace-stats-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.workplace-stats-value {
+    font-weight: 600;
+    color: #28a745;
+    font-size: 1.1rem;
+}
+
+.empty-workplaces {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+}
+
+.empty-workplaces i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-workplaces h3 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.empty-workplaces p {
+    font-size: 0.9rem;
+}
+
+/* Automaticky načtené pole */
+.auto-filled {
+    background-color: #e8f5e8 !important;
+    border-color: #28a745 !important;
+    animation: highlight 0.5s ease-in-out;
+}
+
+@keyframes highlight {
+    0% { background-color: #fff; }
+    50% { background-color: #d4edda; }
+    100% { background-color: #e8f5e8; }
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Automatické směny */
+.automatic-shifts-info {
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.info-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #1976d2;
+    font-size: 1rem;
+}
+
+.info-card p {
+    margin: 0;
+    color: #424242;
+    font-size: 0.9rem;
+}
+
+.weekdays-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.weekday-checkbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.weekday-checkbox:hover {
+    border-color: #007bff;
+    background: #f8f9fa;
+}
+
+.weekday-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.weekday-checkbox input[type="checkbox"]:checked + .weekday-label {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.weekday-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.automatic-shifts-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.automatic-rule-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #9c27b0;
+    transition: all 0.3s ease;
+}
+
+.automatic-rule-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.automatic-rule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.automatic-rule-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.automatic-rule-workplace {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.automatic-rule-days {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.automatic-day-tag {
+    background: #9c27b0;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.automatic-rule-time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.automatic-rule-time-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.automatic-rule-time-value {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #9c27b0;
+}
+
+.automatic-rule-period {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.automatic-rule-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
+}
+
+.automatic-rule-stats-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.automatic-rule-stats-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.automatic-rule-stats-value {
+    font-weight: 600;
+    color: #9c27b0;
+    font-size: 1.1rem;
+}
+
+.automatic-rule-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Filtr pro směny */
+.shifts-filter {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid #dee2e6;
+    border-radius: 20px;
+    background: white;
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.filter-btn:hover {
+    border-color: #007bff;
+    color: #007bff;
+    background: #f8f9fa;
+}
+
+.filter-btn.active {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.filter-btn i {
+    font-size: 0.8rem;
+}
+
+/* Obsazené směny */
+.shift-card.occupied {
+    opacity: 0.7;
+    border-left-color: #dc3545;
+}
+
+/* Specifické styly pro komponenty v admin sekcích s decentními barvami */
+
+/* Správa směn - zelené komponenty */
+#admin-shifts-content .shift-card {
+    background: #f8fafc !important;
+    border-left: 4px solid rgba(16, 185, 129, 0.6) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1) !important;
+}
+
+#admin-shifts-content .shift-card:hover {
+    background: #f1f5f9 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important;
+    border-left-color: rgba(16, 185, 129, 0.8) !important;
+}
+
+/* Automatické směny - fialové komponenty */
+#admin-automatic-content .automatic-rule-card {
+    background: #f8fafc !important;
+    border-left: 4px solid rgba(168, 85, 247, 0.6) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1) !important;
+}
+
+#admin-automatic-content .automatic-rule-card:hover {
+    background: #f1f5f9 !important;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.15) !important;
+    border-left-color: rgba(168, 85, 247, 0.8) !important;
+}
+
+/* Správa pracovišť - oranžové komponenty */
+#admin-workplaces-content .workplace-card {
+    background: #f8fafc !important;
+    border-left: 4px solid rgba(245, 158, 11, 0.6) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1) !important;
+}
+
+#admin-workplaces-content .workplace-card:hover {
+    background: #f1f5f9 !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15) !important;
+    border-left-color: rgba(245, 158, 11, 0.8) !important;
+}
+
+/* Správa uživatelů - červené komponenty */
+#admin-users-content .user-card {
+    background: #f8fafc !important;
+    border-left: 4px solid rgba(239, 68, 68, 0.6) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1) !important;
+}
+
+#admin-users-content .user-card:hover {
+    background: #f1f5f9 !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15) !important;
+    border-left-color: rgba(239, 68, 68, 0.8) !important;
+}
+
+
+.shift-card.occupied .shift-header {
+    background: #f8f9fa;
+}
+
+.shift-card.occupied .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Responzivní design - Vylepšená hlavička */
+@media (max-width: 768px) {
+    .content-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    /* Mobilní hlavička */
+    .header-content {
+        height: 70px;
+        padding: 0 16px;
+        position: relative;
+    }
+    
+    .header-left {
+        gap: 12px;
+    }
+    
+    .logo-small {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .header-info h1 {
+        font-size: 16px;
+        margin-bottom: 2px;
+    }
+    
+    .header-info p {
+        font-size: 12px;
+    }
+    
+    /* Hamburger menu */
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .header-actions {
+        gap: 8px;
+    }
+    
+    .btn-logout {
+        padding: 8px 12px;
+        font-size: 12px;
+        display: none; /* Skryjeme na mobilu, zobrazíme v hamburger menu */
+    }
+    
+    
+    /* Mobilní menu aktivní */
+    .mobile-menu.active {
+        display: block;
+    }
+    
+    /* Skrytí tab navigace na mobilu */
+    .tabs {
+        display: none;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
         gap: 16px;
     }
     
-    .pin-container {
-        flex-direction: column;
-    }
-    
-    .pin-code {
-        font-size: 18px;
-        letter-spacing: 2px;
+    .form-row {
+        grid-template-columns: 1fr;
     }
     
     .modal-actions {
         flex-direction: column;
     }
+    
+    .modal-actions .btn {
+        width: 100%;
+    }
+    
+    .calendar-day {
+        min-height: 50px;
+        padding: 4px;
+    }
+    
+    .calendar-day-number {
+        font-size: 12px;
+    }
+    
+    .shift-indicator {
+        font-size: 8px;
+        padding: 1px 4px;
+    }
 }
 
 @media (max-width: 480px) {
-    .sprava-uzivatelu-section {
-        padding: 16px;
+    /* Extra malé obrazovky */
+    .header-content {
+        height: 60px;
+        padding: 0 12px;
     }
     
-    .user-card {
-        padding: 16px;
-    }
-    
-    .user-name {
-        font-size: 18px;
-    }
-    
-    .user-stats-value {
-        font-size: 20px;
-    }
-    
-    .pin-code {
+    .logo-small {
+        width: 36px;
+        height: 36px;
         font-size: 16px;
-        letter-spacing: 1px;
     }
     
-    .new-user-modal .modal-content {
-        margin: 20px;
-        padding: 20px;
+    .header-info h1 {
+        font-size: 14px;
+    }
+    
+    .header-info p {
+        font-size: 11px;
+    }
+    
+    .mobile-menu-toggle {
+        font-size: 20px;
+        padding: 6px;
+    }
+    
+    .mobile-menu-content {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .mobile-menu-item {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    .mobile-menu-item i {
+        font-size: 16px;
+        width: 18px;
     }
 }
 
+@media (max-width: 480px) {
+    #login-page {
+        padding: 0;
+        background: white;
+    }
+    
+    .login-container {
+        padding: 24px;
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+        max-width: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .main-content {
+        padding: 20px 10px;
+    }
+    
+    .modal-content {
+        margin: 10px;
+    }
+    
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .tab {
+        justify-content: center;
+    }
+}

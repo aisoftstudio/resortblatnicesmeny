@@ -10,10 +10,12 @@ let automaticRules = [];
 let currentDate = new Date();
 let selectedDate = null;
 let currentWorkplaceFilter = 'all';
+let currentEmployeeFilter = 'all';
 
 // Inicializace aplikace
 document.addEventListener('DOMContentLoaded', async function() {
     setupEventListeners();
+    setupMobileMenu();
     await initializeApp();
 });
 
@@ -70,6 +72,14 @@ function setupEventListeners() {
     document.getElementById('pin').addEventListener('input', function(e) {
         e.target.value = e.target.value.replace(/\D/g, '');
     });
+    
+    // PIN input pro nového uživatele - pouze číslice a max 4 znaky
+    const userPinInput = document.getElementById('user-pin-input');
+    if (userPinInput) {
+        userPinInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+    }
     
     // Logout tlačítka
     const logoutBtn = document.getElementById('logout-btn');
@@ -130,6 +140,26 @@ function setupModalListeners() {
     document.getElementById('workplace-has-fixed-hours').addEventListener('change', function() {
         const hoursSection = document.getElementById('workplace-hours-section');
         hoursSection.style.display = this.checked ? 'block' : 'none';
+        
+        // Reset checkboxů při skrytí sekce
+        if (!this.checked) {
+            document.getElementById('workplace-fixed-start').checked = false;
+            document.getElementById('workplace-fixed-end').checked = false;
+            document.getElementById('start-time-group').style.display = 'none';
+            document.getElementById('end-time-group').style.display = 'none';
+        }
+    });
+    
+    // Checkbox pro pevný čas příchodu
+    document.getElementById('workplace-fixed-start').addEventListener('change', function() {
+        const startTimeGroup = document.getElementById('start-time-group');
+        startTimeGroup.style.display = this.checked ? 'block' : 'none';
+    });
+    
+    // Checkbox pro pevný čas odchodu
+    document.getElementById('workplace-fixed-end').addEventListener('change', function() {
+        const endTimeGroup = document.getElementById('end-time-group');
+        endTimeGroup.style.display = this.checked ? 'block' : 'none';
     });
     
     // Select pracoviště pro automatické načtení času
@@ -140,19 +170,23 @@ function setupModalListeners() {
         const endTimeInput = document.getElementById('shift-end');
         
         if (workplace && workplace.hasFixedHours) {
-            // Automatické načtení času z pracoviště
-            startTimeInput.value = workplace.startTime;
-            endTimeInput.value = workplace.endTime;
+            // Načtení pevného času příchodu
+            if (workplace.fixedStart && workplace.startTime) {
+                startTimeInput.value = workplace.startTime;
+                startTimeInput.classList.add('auto-filled');
+                setTimeout(() => startTimeInput.classList.remove('auto-filled'), 2000);
+            } else {
+                startTimeInput.value = '';
+            }
             
-            // Vizuální indikace automatického načtení
-            startTimeInput.classList.add('auto-filled');
-            endTimeInput.classList.add('auto-filled');
-            
-            // Odstranění třídy po 2 sekundách
-            setTimeout(() => {
-                startTimeInput.classList.remove('auto-filled');
-                endTimeInput.classList.remove('auto-filled');
-            }, 2000);
+            // Načtení pevného času odchodu
+            if (workplace.fixedEnd && workplace.endTime) {
+                endTimeInput.value = workplace.endTime;
+                endTimeInput.classList.add('auto-filled');
+                setTimeout(() => endTimeInput.classList.remove('auto-filled'), 2000);
+            } else {
+                endTimeInput.value = '';
+            }
         } else {
             // Vyčištění času pro pracoviště bez pevných hodin
             startTimeInput.value = '';
@@ -287,7 +321,10 @@ function showAdminInterface() {
         adminPage.style.zIndex = '999';
     }
     
-    document.getElementById('admin-name').textContent = currentUser.name;
+    updateMobileMenuNames();
+    
+    // Inicializace mobilního menu pro admin sekce
+    updateMobileMenuActiveState('calendar');
     
     // Inicializace selectu pracovišť
     updateWorkplaceSelect();
@@ -312,7 +349,7 @@ function showUserPage() {
         userPage.style.zIndex = '999';
     }
     
-    document.getElementById('user-name').textContent = currentUser.name;
+    updateMobileMenuNames();
     
     // Nastavení dnešního data jako výchozího pro uživatele
     const today = new Date();
@@ -399,12 +436,15 @@ function switchAdminTab(tabName) {
     if (activeTab) activeTab.classList.add('active');
     if (activeContent) activeContent.classList.add('active');
     
+    // Aktualizace mobilního menu
+    updateMobileMenuActiveState(tabName);
+    
     // Aktualizace obsahu podle tabu
     if (tabName === 'calendar') {
         renderCalendar('calendar');
         updateShiftsList();
     } else if (tabName === 'shifts') {
-        updateWorkplaceFilterButtons();
+        updateFilterSelects();
         updateAdminShiftsList();
     } else if (tabName === 'automatic') {
         updateAutomaticShiftsList();
@@ -472,7 +512,22 @@ function generateCalendarDays(startDate, endDate, year, month) {
         const isToday = isSameDate(current, new Date());
         const isSelected = selectedDate && isSameDate(current, new Date(selectedDate));
         
-        const shiftsCount = shifts.filter(shift => shift.date === dateStr).length;
+        // Pro uživatelský kalendář počítáme pouze dostupné směny
+        let shiftsCount;
+        if (currentUser && currentUser.role === 'user') {
+            shiftsCount = shifts.filter(shift => {
+                if (shift.date !== dateStr) return false;
+                
+                const isSignedUp = shift.users.includes(currentUser.id);
+                const isOccupied = shift.users.length > 0;
+                
+                // Počítat pouze volné směny nebo vlastní směny
+                return !isOccupied || isSignedUp;
+            }).length;
+        } else {
+            // Pro admin kalendář počítáme všechny směny
+            shiftsCount = shifts.filter(shift => shift.date === dateStr).length;
+        }
         
         let dayClass = 'calendar-day';
         if (!isCurrentMonth) dayClass += ' other-month';
@@ -553,41 +608,54 @@ function updateShiftsList() {
         return;
     }
     
-    shiftsList.innerHTML = dayShifts.map(shift => `
-        <div class="shift-card">
-            <div class="shift-header">
-                <div class="shift-info">
-                    <h4><i class="fas fa-map-marker-alt"></i> ${shift.position}</h4>
-                    <div class="shift-time">
-                        <i class="fas fa-clock"></i>
-                        ${shift.startTime} - ${shift.endTime}
+    shiftsList.innerHTML = dayShifts.map(shift => {
+        const isOccupied = shift.users.length > 0;
+        const statusClass = isOccupied ? 'occupied' : 'available';
+        const statusText = isOccupied ? 'Obsazené' : 'Volné';
+        
+        return `
+            <div class="shift-card clickable-shift" onclick="openShiftInManagement('${shift.id}')" title="Klikněte pro otevření v sekci Správa směn">
+                <div class="shift-content">
+                    <div class="shift-info">
+                        <div class="shift-workplace">
+                            <i class="fas fa-building"></i> ${shift.position}
+                        </div>
+                        <div class="shift-time">
+                            <i class="fas fa-clock"></i>
+                            ${shift.startTime} - ${shift.endTime}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="shift-users">
-                <div class="shift-users-header">
-                    <i class="fas fa-users"></i>
-                    Přihlášení (${shift.users.length})
-                </div>
-                <div class="users-list">
-                    ${shift.users.length > 0 ? 
-                        shift.users.map(userId => {
-                            const user = users.find(u => u.id === userId);
-                            return `
-                                <div class="user-tag">
-                                    ${user ? user.name : 'Neznámý uživatel'}
-                                    <button class="remove-btn" onclick="removeUserFromShift('${shift.id}', '${userId}')">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            `;
-                        }).join('') : 
-                        '<span class="no-users">Zatím se nikdo nepřihlásil</span>'
-                    }
+                <div class="shift-status">
+                    <span class="status-badge ${statusClass}">${statusText}</span>
+                    <i class="fas fa-external-link-alt shift-link-icon"></i>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
+}
+
+// Otevření směny v sekci Správa směn
+function openShiftInManagement(shiftId) {
+    // Přepnutí na sekci Správa směn
+    switchAdminTab('shifts');
+    
+    // Nastavení filtru na pracoviště této směny
+    const shift = shifts.find(s => s.id === shiftId);
+    if (shift) {
+        // Najdeme tlačítko pro toto pracoviště
+        const workplaceButton = document.querySelector(`[data-workplace="${shift.position}"]`);
+        if (workplaceButton) {
+            // Odstraníme active třídu ze všech tlačítek
+            document.querySelectorAll('.modern-filter-btn').forEach(btn => btn.classList.remove('active'));
+            // Přidáme active třídu na tlačítko tohoto pracoviště
+            workplaceButton.classList.add('active');
+            // Nastavíme aktuální filtr
+            currentWorkplaceFilter = shift.position;
+            // Aktualizujeme seznam směn
+            updateAdminShiftsList();
+        }
+    }
 }
 
 // Aktualizace seznamu směn (uživatel)
@@ -601,7 +669,17 @@ function updateUserShiftsList() {
         return;
     }
     
-    const dayShifts = shifts.filter(shift => shift.date === selectedDate);
+    // Filtrování směn - uživatel vidí pouze volné směny nebo své vlastní
+    const dayShifts = shifts.filter(shift => {
+        if (shift.date !== selectedDate) return false;
+        
+        const isSignedUp = shift.users.includes(currentUser.id);
+        const isOccupied = shift.users.length > 0;
+        
+        // Zobrazit pouze volné směny nebo vlastní směny
+        return !isOccupied || isSignedUp;
+    });
+    
     const date = new Date(selectedDate);
     const dateStr = date.toLocaleDateString('cs-CZ', { 
         day: 'numeric', 
@@ -616,8 +694,8 @@ function updateUserShiftsList() {
             <div class="shift-card">
                 <div style="text-align: center; color: #9ca3af; padding: 40px;">
                     <i class="fas fa-clock" style="font-size: 48px; margin-bottom: 16px;"></i>
-                    <h3>Žádné směny</h3>
-                    <p>V tento den nejsou naplánované žádné směny.</p>
+                    <h3>Žádné dostupné směny</h3>
+                    <p>V tento den nejsou žádné volné směny nebo směny, které jste si vzali.</p>
                 </div>
             </div>
         `;
@@ -626,45 +704,29 @@ function updateUserShiftsList() {
     
     shiftsList.innerHTML = dayShifts.map(shift => {
         const isSignedUp = shift.users.includes(currentUser.id);
-        const isOccupied = shift.users.length > 0;
-        const occupiedBy = isOccupied ? users.find(u => u.id === shift.users[0]) : null;
         
         return `
-            <div class="shift-card ${isOccupied && !isSignedUp ? 'occupied' : ''}">
-                <div class="shift-header">
+            <div class="shift-card">
+                <div class="shift-content">
                     <div class="shift-info">
-                        <h4><i class="fas fa-map-marker-alt"></i> ${shift.position}</h4>
+                        <div class="shift-workplace">
+                            <i class="fas fa-building"></i> ${shift.position}
+                        </div>
                         <div class="shift-time">
                             <i class="fas fa-clock"></i>
                             ${shift.startTime} - ${shift.endTime}
                         </div>
                     </div>
-                    <div class="shift-actions">
-                        ${isSignedUp ? 
-                            `<button class="btn btn-danger" onclick="unsubscribeFromShift('${shift.id}')">
-                                <i class="fas fa-undo"></i> Vrátit směnu
-                            </button>` :
-                            isOccupied ?
-                                `<button class="btn btn-secondary" disabled>
-                                    <i class="fas fa-lock"></i> Obsazeno
-                                </button>` :
-                                `<button class="btn btn-primary" onclick="subscribeToShift('${shift.id}')">
-                                    <i class="fas fa-hand-paper"></i> Vzít směnu
-                                </button>`
-                        }
-                    </div>
                 </div>
-                <div class="shift-users">
-                    <div class="shift-users-header">
-                        <i class="fas fa-user"></i>
-                        ${isOccupied ? 'Obsazeno' : 'Volné'}
-                    </div>
-                    <div class="users-list">
-                        ${isOccupied ? 
-                            `<div class="user-tag">${occupiedBy ? occupiedBy.name : 'Neznámý uživatel'}</div>` :
-                            '<span class="no-users">Směna je volná</span>'
-                        }
-                    </div>
+                <div class="shift-status">
+                    ${isSignedUp ? 
+                        `<button class="modern-btn modern-btn-danger" onclick="unsubscribeFromShift('${shift.id}')">
+                            <i class="fas fa-undo"></i> Vrátit směnu
+                        </button>` :
+                        `<button class="modern-btn modern-btn-primary" onclick="subscribeToShift('${shift.id}')">
+                            <i class="fas fa-hand-paper"></i> Vzít směnu
+                        </button>`
+                    }
                 </div>
             </div>
         `;
@@ -792,7 +854,13 @@ async function removeUserFromShift(shiftId, userId) {
         try {
             shift.users = shift.users.filter(id => id !== userId);
             await saveData();
+            
+            // Aktualizace všech seznamů
             updateShiftsList();
+            updateUserShiftsList();
+            updateAdminShiftsList();
+            renderCalendar('calendar');
+            renderCalendar('user-calendar');
         } catch (error) {
             console.error('Chyba při odstranění uživatele ze směny:', error);
             alert('Chyba při odstranění uživatele ze směny. Zkuste to znovu.');
@@ -887,12 +955,28 @@ async function handleNewUser(e) {
     
     const formData = new FormData(e.target);
     const userName = formData.get('user-name-input');
-    const newPin = generatePin();
+    const userPin = formData.get('user-pin-input');
+    
+    if (!ValidationUtils.validateName(userName)) {
+        alert('Prosím zadejte platné jméno uživatele');
+        return;
+    }
+    
+    if (!ValidationUtils.validatePin(userPin)) {
+        alert('Prosím zadejte platný 4místný PIN');
+        return;
+    }
+    
+    // Kontrola, zda PIN již neexistuje
+    if (users.some(user => user.pin === userPin)) {
+        alert('Tento PIN již existuje. Zvolte jiný PIN.');
+        return;
+    }
     
     const newUser = {
         id: 'user-' + Date.now(),
-        pin: newPin,
-        name: userName,
+        pin: userPin,
+        name: ValidationUtils.sanitizeText(userName),
         isAdmin: false
     };
     
@@ -907,7 +991,7 @@ async function handleNewUser(e) {
         document.getElementById('new-user-form-container').style.display = 'none';
         document.getElementById('new-user-result').style.display = 'block';
         document.getElementById('created-user-name').textContent = userName;
-        document.getElementById('new-user-pin').textContent = newPin;
+        document.getElementById('new-user-pin').textContent = userPin;
         
     } catch (error) {
         console.error('Chyba při vytváření uživatele:', error);
@@ -1063,12 +1147,20 @@ async function loadData() {
         if (users.length === 0) {
             const adminUser = {
                 id: 'admin-1',
-                pin: '12345',
+                pin: '0125',
                 name: 'Admin',
                 isAdmin: true
             };
             users.push(adminUser);
             await saveData(); // Uloží admin uživatele do Firebase
+        } else {
+            // Aktualizace existujícího admina s novým PINem
+            const existingAdmin = users.find(u => u.isAdmin && u.pin === '12345');
+            if (existingAdmin) {
+                console.log('🔄 Aktualizuji existujícího admina s novým PINem...');
+                existingAdmin.pin = '0125';
+                await saveData(); // Uloží aktualizovaného admina do Firebase
+            }
         }
         
         console.log('Data úspěšně načtena z Firebase:');
@@ -1093,6 +1185,13 @@ function formatDate(date) {
     return date.toISOString().split('T')[0];
 }
 
+function formatDisplayDate(date) {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+}
+
 function isSameDate(date1, date2) {
     return formatDate(date1) === formatDate(date2);
 }
@@ -1114,44 +1213,29 @@ function updateUsersList() {
     }
     
     usersList.innerHTML = users.map(user => {
-        const userShifts = shifts.filter(shift => shift.users.includes(user.id));
-        const totalShifts = userShifts.length;
         
         return `
             <div class="user-card">
                 <div class="user-header">
                     <div class="user-info">
-                        <div class="user-name">${user.name}</div>
-                        <div class="user-role ${user.isAdmin ? 'admin' : 'user'}">
-                            <i class="fas fa-${user.isAdmin ? 'crown' : 'user'}"></i>
-                            ${user.isAdmin ? 'Admin' : 'Uživatel'}
+                        <div class="user-columns">
+                            <div class="user-column user-name-column">${user.name}</div>
+                            <div class="user-column user-role-column">
+                                <div class="user-role ${user.isAdmin ? 'admin' : 'user'}">
+                                    <i class="fas fa-${user.isAdmin ? 'crown' : 'user'}"></i>
+                                    ${user.isAdmin ? 'Admin' : 'Uživatel'}
+                                </div>
+                            </div>
+                            <div class="user-column user-pin-column">
+                                <span class="user-pin-label">PIN:</span>
+                                <span class="user-pin-code">${user.pin}</span>
+                            </div>
                         </div>
                     </div>
                     <div class="user-actions">
                         <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')" title="Smazat uživatele">
                             <i class="fas fa-trash"></i>
                         </button>
-                    </div>
-                </div>
-                
-                <div class="user-pin">
-                    <span class="user-pin-label">PIN:</span>
-                    <span class="user-pin-code">${user.pin}</span>
-                </div>
-                
-                <div class="user-stats">
-                    <div class="user-stats-item">
-                        <div class="user-stats-value">${totalShifts}</div>
-                        <div class="user-stats-label">Celkem směn</div>
-                    </div>
-                    <div class="user-stats-item">
-                        <div class="user-stats-value">${userShifts.filter(shift => {
-                            const shiftDate = new Date(shift.date);
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            return shiftDate >= today;
-                        }).length}</div>
-                        <div class="user-stats-label">Budoucí směny</div>
                     </div>
                 </div>
             </div>
@@ -1163,16 +1247,36 @@ function updateAdminShiftsList() {
     const shiftsList = document.getElementById('admin-shifts-list');
     if (!shiftsList) return;
     
-    // Filtrování směn podle pracoviště
+    // Filtrování směn podle pracoviště a zaměstnance
     let filteredShifts = shifts;
+    
+    // Filtrování podle pracoviště
     if (currentWorkplaceFilter !== 'all') {
-        filteredShifts = shifts.filter(shift => shift.position === currentWorkplaceFilter);
+        filteredShifts = filteredShifts.filter(shift => shift.position === currentWorkplaceFilter);
+    }
+    
+    // Filtrování podle zaměstnance
+    if (currentEmployeeFilter !== 'all') {
+        filteredShifts = filteredShifts.filter(shift => 
+            shift.users && shift.users.includes(currentEmployeeFilter)
+        );
     }
     
     if (filteredShifts.length === 0) {
-        const message = currentWorkplaceFilter === 'all' 
-            ? 'Zatím nebyly vytvořeny žádné směny. Klikněte na "Nová směna" pro vytvoření první směny.'
-            : `Žádné směny pro pracoviště "${currentWorkplaceFilter}".`;
+        let message = 'Zatím nebyly vytvořeny žádné směny. Klikněte na "Nová směna" pro vytvoření první směny.';
+        
+        if (currentWorkplaceFilter !== 'all' || currentEmployeeFilter !== 'all') {
+            const filters = [];
+            if (currentWorkplaceFilter !== 'all') {
+                filters.push(`pracoviště "${currentWorkplaceFilter}"`);
+            }
+            if (currentEmployeeFilter !== 'all') {
+                const employee = users.find(u => u.id === currentEmployeeFilter);
+                const employeeName = employee ? employee.name : 'vybraného zaměstnance';
+                filters.push(`zaměstnance "${employeeName}"`);
+            }
+            message = `Žádné směny pro ${filters.join(' a ')}.`;
+        }
         
         shiftsList.innerHTML = `
             <div class="empty-shifts">
@@ -1194,46 +1298,34 @@ function updateAdminShiftsList() {
         today.setHours(0, 0, 0, 0);
         const isPast = shiftDate < today;
         
+        const isOccupied = shiftUsers.length > 0;
+        const statusClass = isOccupied ? 'occupied' : 'available';
+        const statusText = isOccupied ? 'Obsazené' : 'Volné';
+        
         return `
-            <div class="shift-card ${isPast ? 'past-shift' : ''}">
-                <div class="shift-info">
-                    <div class="shift-date">
-                        <i class="fas fa-calendar"></i>
-                        ${formatDate(shiftDate)}
+            <div class="workplace-card ${isPast ? 'past-shift' : ''}">
+                <div class="workplace-header">
+                    <div class="workplace-info">
+                        <div class="shift-columns">
+                            <div class="shift-column workplace-column">${shift.position}</div>
+                            <div class="shift-column time-column">${shift.startTime} - ${shift.endTime}</div>
+                            <div class="shift-column date-column">${formatDisplayDate(shiftDate)}</div>
+                        </div>
                     </div>
-                    <div class="shift-time">
-                        <i class="fas fa-clock"></i>
-                        ${shift.startTime} - ${shift.endTime}
+                    <div class="workplace-actions">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        ${shiftUsers.length > 0 ? `
+                            <div class="shift-user-info">
+                                <span class="user-name">${shiftUsers[0].name}</span>
+                                <button class="modern-btn modern-btn-warning" onclick="removeUserFromShift('${shift.id}', '${shiftUsers[0].id}')" title="Odebrat uživatele ze směny">
+                                    <i class="fas fa-user-minus"></i>
+                                </button>
+                            </div>
+                        ` : ''}
+                        <button class="modern-btn modern-btn-danger" onclick="deleteShift('${shift.id}')" title="Smazat směnu">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
-                    <div class="shift-position">
-                        <i class="fas fa-map-marker-alt"></i>
-                        ${shift.position}
-                    </div>
-                </div>
-                
-                <div class="shift-users">
-                    <div class="users-header">
-                        <span class="users-count">${shiftUsers.length} uživatel${shiftUsers.length === 1 ? '' : shiftUsers.length < 5 ? 'é' : 'ů'}</span>
-                    </div>
-                    <div class="users-list">
-                        ${shiftUsers.length === 0 ? 
-                            '<div class="no-users">Žádní přihlášení uživatelé</div>' :
-                            shiftUsers.map(user => `
-                                <div class="user-item">
-                                    <span class="user-name">${user.name}</span>
-                                    <button class="btn btn-sm btn-outline" onclick="removeUserFromShift('${shift.id}', '${user.id}')" title="Odstranit ze směny">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            `).join('')
-                        }
-                    </div>
-                </div>
-                
-                <div class="shift-actions">
-                    <button class="btn btn-danger btn-sm" onclick="deleteShift('${shift.id}')" title="Smazat směnu">
-                        <i class="fas fa-trash"></i> Smazat
-                    </button>
                 </div>
             </div>
         `;
@@ -1241,12 +1333,18 @@ function updateAdminShiftsList() {
 }
 
 async function deleteUser(userId) {
-    if (!confirm('Opravdu chcete smazat tohoto uživatele? Tato akce je nevratná.')) {
+    // Najdeme uživatele pro kontrolu admin práv
+    const user = users.find(u => u.id === userId);
+    
+    // Zabránění smazání administrátorského účtu
+    if (user && user.isAdmin) {
+        alert('Administrátorský účet nelze smazat!');
         return;
     }
     
-    // Najdeme uživatele pro získání Firebase ID
-    const user = users.find(u => u.id === userId);
+    if (!confirm('Opravdu chcete smazat tohoto uživatele? Tato akce je nevratná.')) {
+        return;
+    }
     
     // Odstranění uživatele ze všech směn
     shifts.forEach(shift => {
@@ -1322,21 +1420,22 @@ function updateWorkplacesList() {
     }
     
     workplacesList.innerHTML = workplaces.map(workplace => {
-        const workplaceShifts = shifts.filter(shift => shift.position === workplace.name);
-        const totalShifts = workplaceShifts.length;
-        
         return `
             <div class="workplace-card">
                 <div class="workplace-header">
                     <div class="workplace-info">
-                        <div class="workplace-name">${workplace.name}</div>
-                        <div class="workplace-description">${workplace.description || 'Bez popisu'}</div>
-                        ${workplace.hasFixedHours ? `
-                            <div class="workplace-hours">
-                                <span class="workplace-hours-label">Pevné hodiny:</span>
-                                <span class="workplace-hours-time">${workplace.startTime} - ${workplace.endTime}</span>
+                        <div class="workplace-columns">
+                            <div class="workplace-column workplace-name-column">${workplace.name}</div>
+                            <div class="workplace-column workplace-time-column">
+                                <span class="time-start ${workplace.hasFixedHours && workplace.fixedStart && workplace.startTime ? 'fixed' : 'not-fixed'}">
+                                    ${workplace.hasFixedHours && workplace.fixedStart && workplace.startTime ? workplace.startTime : '00:00'}
+                                </span>
+                                <span class="time-separator"> - </span>
+                                <span class="time-end ${workplace.hasFixedHours && workplace.fixedEnd && workplace.endTime ? 'fixed' : 'not-fixed'}">
+                                    ${workplace.hasFixedHours && workplace.fixedEnd && workplace.endTime ? workplace.endTime : '00:00'}
+                                </span>
                             </div>
-                        ` : ''}
+                        </div>
                     </div>
                     <div class="workplace-actions">
                         <button class="btn btn-primary btn-sm" onclick="editWorkplace('${workplace.id}')" title="Upravit pracoviště">
@@ -1345,22 +1444,6 @@ function updateWorkplacesList() {
                         <button class="btn btn-danger btn-sm" onclick="deleteWorkplace('${workplace.id}')" title="Smazat pracoviště">
                             <i class="fas fa-trash"></i>
                         </button>
-                    </div>
-                </div>
-                
-                <div class="workplace-stats">
-                    <div class="workplace-stats-item">
-                        <div class="workplace-stats-value">${totalShifts}</div>
-                        <div class="workplace-stats-label">Celkem směn</div>
-                    </div>
-                    <div class="workplace-stats-item">
-                        <div class="workplace-stats-value">${workplaceShifts.filter(shift => {
-                            const shiftDate = new Date(shift.date);
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            return shiftDate >= today;
-                        }).length}</div>
-                        <div class="workplace-stats-label">Budoucí směny</div>
                     </div>
                 </div>
             </div>
@@ -1392,14 +1475,22 @@ function editWorkplace(workplaceId) {
     
     // Vyplnění formuláře
     document.getElementById('workplace-name').value = workplace.name;
-    document.getElementById('workplace-description').value = workplace.description || '';
-    document.getElementById('workplace-has-fixed-hours').checked = workplace.hasFixedHours;
+    document.getElementById('workplace-has-fixed-hours').checked = workplace.hasFixedHours || false;
+    document.getElementById('workplace-fixed-start').checked = workplace.fixedStart || false;
+    document.getElementById('workplace-fixed-end').checked = workplace.fixedEnd || false;
     
     const hoursSection = document.getElementById('workplace-hours-section');
     hoursSection.style.display = workplace.hasFixedHours ? 'block' : 'none';
     
-    if (workplace.hasFixedHours) {
+    const startTimeGroup = document.getElementById('start-time-group');
+    const endTimeGroup = document.getElementById('end-time-group');
+    startTimeGroup.style.display = workplace.fixedStart ? 'block' : 'none';
+    endTimeGroup.style.display = workplace.fixedEnd ? 'block' : 'none';
+    
+    if (workplace.startTime) {
         document.getElementById('workplace-start-time').value = workplace.startTime;
+    }
+    if (workplace.endTime) {
         document.getElementById('workplace-end-time').value = workplace.endTime;
     }
     
@@ -1411,8 +1502,9 @@ async function handleWorkplace(e) {
     e.preventDefault();
     
     const name = document.getElementById('workplace-name').value;
-    const description = document.getElementById('workplace-description').value;
     const hasFixedHours = document.getElementById('workplace-has-fixed-hours').checked;
+    const fixedStart = document.getElementById('workplace-fixed-start').checked;
+    const fixedEnd = document.getElementById('workplace-fixed-end').checked;
     const startTime = document.getElementById('workplace-start-time').value;
     const endTime = document.getElementById('workplace-end-time').value;
     const editId = document.getElementById('workplace-form').dataset.editId;
@@ -1423,17 +1515,23 @@ async function handleWorkplace(e) {
         return;
     }
     
-    if (hasFixedHours && (!startTime || !endTime)) {
-        alert('Prosím zadejte čas od a do pro pevné hodiny');
+    if (hasFixedHours && fixedStart && !startTime) {
+        alert('Prosím zadejte čas příchodu');
+        return;
+    }
+    
+    if (hasFixedHours && fixedEnd && !endTime) {
+        alert('Prosím zadejte čas odchodu');
         return;
     }
     
     const workplaceData = {
         name: name,
-        description: description,
         hasFixedHours: hasFixedHours,
-        startTime: hasFixedHours ? startTime : null,
-        endTime: hasFixedHours ? endTime : null
+        fixedStart: fixedStart,
+        fixedEnd: fixedEnd,
+        startTime: fixedStart ? startTime : null,
+        endTime: fixedEnd ? endTime : null
     };
     
     try {
@@ -1508,40 +1606,65 @@ function updateWorkplaceSelect() {
     ).join('');
 }
 
-function updateWorkplaceFilterButtons() {
-    const filterButtonsContainer = document.getElementById('workplace-filter-buttons');
-    if (!filterButtonsContainer) return;
+function updateFilterSelects() {
+    updateWorkplaceSelect();
+    updateEmployeeSelect();
+    nastavitFilterEventListeners();
+}
+
+function updateWorkplaceSelect() {
+    const workplaceSelect = document.getElementById('workplace-filter-select');
+    if (!workplaceSelect) return;
     
-    // Vytvoření tlačítek pro všechna pracoviště
-    const workplaceButtons = workplaces.map(workplace => 
-        `<button class="filter-btn" data-workplace="${workplace.name}">
-            <i class="fas fa-building"></i> ${workplace.name}
-        </button>`
+    // Vytvoření option elementů pro všechna pracoviště
+    const workplaceOptions = workplaces.map(workplace => 
+        `<option value="${workplace.name}">${workplace.name}</option>`
     ).join('');
     
-    filterButtonsContainer.innerHTML = `
-        <button class="filter-btn ${currentWorkplaceFilter === 'all' ? 'active' : ''}" data-workplace="all">
-            <i class="fas fa-th"></i> Vše
-        </button>
-        ${workplaceButtons}
+    workplaceSelect.innerHTML = `
+        <option value="all">Všechna pracoviště</option>
+        ${workplaceOptions}
     `;
     
-    // Přidání event listenerů
-    filterButtonsContainer.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Odstranění active třídy ze všech tlačítek
-            filterButtonsContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            
-            // Přidání active třídy na kliknuté tlačítko
-            this.classList.add('active');
-            
-            // Nastavení aktuálního filtru
-            currentWorkplaceFilter = this.dataset.workplace;
-            
-            // Aktualizace seznamu směn
+    // Nastavení aktuální hodnoty
+    workplaceSelect.value = currentWorkplaceFilter;
+}
+
+function updateEmployeeSelect() {
+    const employeeSelect = document.getElementById('employee-filter-select');
+    if (!employeeSelect) return;
+    
+    // Vytvoření option elementů pro všechny zaměstnance
+    const employeeOptions = users.map(user => 
+        `<option value="${user.id}">${user.name}</option>`
+    ).join('');
+    
+    employeeSelect.innerHTML = `
+        <option value="all">Všichni zaměstnanci</option>
+        ${employeeOptions}
+    `;
+    
+    // Nastavení aktuální hodnoty
+    employeeSelect.value = currentEmployeeFilter;
+}
+
+function nastavitFilterEventListeners() {
+    const workplaceSelect = document.getElementById('workplace-filter-select');
+    const employeeSelect = document.getElementById('employee-filter-select');
+    
+    if (workplaceSelect) {
+        workplaceSelect.addEventListener('change', function() {
+            currentWorkplaceFilter = this.value;
             updateAdminShiftsList();
         });
-    });
+    }
+    
+    if (employeeSelect) {
+        employeeSelect.addEventListener('change', function() {
+            currentEmployeeFilter = this.value;
+            updateAdminShiftsList();
+        });
+    }
 }
 
 // Automatické směny
@@ -1570,41 +1693,22 @@ function updateAutomaticShiftsList() {
         );
         
         return `
-            <div class="automatic-rule-card">
-                <div class="automatic-rule-header">
-                    <div class="automatic-rule-info">
-                        <div class="automatic-rule-workplace">${rule.workplace}</div>
-                        <div class="automatic-rule-days">
-                            ${selectedDays.map(day => `<span class="automatic-day-tag">${day}</span>`).join('')}
-                        </div>
-                        <div class="automatic-rule-time">
-                            <span class="automatic-rule-time-label">Čas:</span>
-                            <span class="automatic-rule-time-value">${rule.startTime} - ${rule.endTime}</span>
-                        </div>
-                        <div class="automatic-rule-period">
-                            <i class="fas fa-calendar"></i> Do: ${new Date(rule.endDate).toLocaleDateString('cs-CZ')}
+            <div class="workplace-card">
+                <div class="workplace-header">
+                    <div class="workplace-info">
+                        <div class="automatic-columns">
+                            <div class="automatic-column workplace-column">${rule.workplace}</div>
+                            <div class="automatic-column time-column">${rule.startTime} - ${rule.endTime}</div>
+                            <div class="automatic-column days-column">
+                                ${selectedDays.map(day => `<span class="automatic-day-tag">${day}</span>`).join('')}
+                            </div>
+                            <div class="automatic-column period-column">Do: ${new Date(rule.endDate).toLocaleDateString('cs-CZ')}</div>
                         </div>
                     </div>
-                    <div class="automatic-rule-actions">
+                    <div class="workplace-actions">
                         <button class="btn btn-danger btn-sm" onclick="deleteAutomaticRule('${rule.id}')" title="Smazat pravidlo">
                             <i class="fas fa-trash"></i>
                         </button>
-                    </div>
-                </div>
-                
-                <div class="automatic-rule-stats">
-                    <div class="automatic-rule-stats-item">
-                        <div class="automatic-rule-stats-value">${generatedShifts.length}</div>
-                        <div class="automatic-rule-stats-label">Vygenerované směny</div>
-                    </div>
-                    <div class="automatic-rule-stats-item">
-                        <div class="automatic-rule-stats-value">${generatedShifts.filter(shift => {
-                            const shiftDate = new Date(shift.date);
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            return shiftDate >= today;
-                        }).length}</div>
-                        <div class="automatic-rule-stats-label">Budoucí směny</div>
                     </div>
                 </div>
             </div>
@@ -1809,4 +1913,123 @@ window.deleteWorkplace = deleteWorkplace;
 window.showAutomaticShiftsModal = showAutomaticShiftsModal;
 window.hideAutomaticShiftsModal = hideAutomaticShiftsModal;
 window.deleteAutomaticRule = deleteAutomaticRule;
+
+// Mobilní menu funkcionalita
+function setupMobileMenu() {
+    // Admin mobilní menu
+    const adminMobileToggle = document.getElementById('mobile-menu-toggle');
+    const adminMobileMenu = document.getElementById('mobile-menu');
+    const adminMobileLogout = document.getElementById('mobile-logout-btn');
+    
+    if (adminMobileToggle && adminMobileMenu) {
+        adminMobileToggle.addEventListener('click', function() {
+            adminMobileMenu.classList.toggle('active');
+            adminMobileToggle.classList.toggle('active');
+            
+            // Animace hamburger ikony
+            const icon = adminMobileToggle.querySelector('i');
+            if (adminMobileMenu.classList.contains('active')) {
+                icon.className = 'fas fa-times';
+            } else {
+                icon.className = 'fas fa-bars';
+            }
+        });
+        
+        // Zavření menu při kliknutí mimo něj
+        document.addEventListener('click', function(event) {
+            if (!adminMobileToggle.contains(event.target) && !adminMobileMenu.contains(event.target)) {
+                adminMobileMenu.classList.remove('active');
+                adminMobileToggle.classList.remove('active');
+                adminMobileToggle.querySelector('i').className = 'fas fa-bars';
+            }
+        });
+    }
+    
+    if (adminMobileLogout) {
+        adminMobileLogout.addEventListener('click', function() {
+            logout();
+        });
+    }
+    
+    // Mobilní navigace admin sekcí
+    const mobileSectionItems = document.querySelectorAll('.mobile-section-item');
+    mobileSectionItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const section = this.getAttribute('data-section');
+            
+            // Zavření mobilního menu
+            adminMobileMenu.classList.remove('active');
+            adminMobileToggle.classList.remove('active');
+            adminMobileToggle.querySelector('i').className = 'fas fa-bars';
+            
+            // Přepnutí na vybranou sekci
+            switchAdminTab(section);
+        });
+    });
+    
+    // Uživatelské mobilní menu
+    const userMobileToggle = document.getElementById('user-mobile-menu-toggle');
+    const userMobileMenu = document.getElementById('user-mobile-menu');
+    const userMobileLogout = document.getElementById('user-mobile-logout-btn');
+    
+    if (userMobileToggle && userMobileMenu) {
+        userMobileToggle.addEventListener('click', function() {
+            userMobileMenu.classList.toggle('active');
+            userMobileToggle.classList.toggle('active');
+            
+            // Animace hamburger ikony
+            const icon = userMobileToggle.querySelector('i');
+            if (userMobileMenu.classList.contains('active')) {
+                icon.className = 'fas fa-times';
+            } else {
+                icon.className = 'fas fa-bars';
+            }
+        });
+        
+        // Zavření menu při kliknutí mimo něj
+        document.addEventListener('click', function(event) {
+            if (!userMobileToggle.contains(event.target) && !userMobileMenu.contains(event.target)) {
+                userMobileMenu.classList.remove('active');
+                userMobileToggle.classList.remove('active');
+                userMobileToggle.querySelector('i').className = 'fas fa-bars';
+            }
+        });
+    }
+    
+    if (userMobileLogout) {
+        userMobileLogout.addEventListener('click', function() {
+            logout();
+        });
+    }
+}
+
+// Aktualizace mobilních menu při změně uživatele
+function updateMobileMenuNames() {
+    if (currentUser) {
+        const mobileAdminName = document.getElementById('mobile-admin-name');
+        const mobileUserName = document.getElementById('mobile-user-name');
+        
+        if (currentUser.isAdmin && mobileAdminName) {
+            mobileAdminName.textContent = currentUser.name;
+        }
+        
+        if (!currentUser.isAdmin && mobileUserName) {
+            mobileUserName.textContent = currentUser.name;
+        }
+    }
+}
+
+// Aktualizace aktivního stavu v mobilním menu
+function updateMobileMenuActiveState(activeSection) {
+    // Odstranění aktivního stavu ze všech sekcí
+    document.querySelectorAll('.mobile-section-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Přidání aktivního stavu k vybrané sekci
+    const activeItem = document.querySelector(`.mobile-section-item[data-section="${activeSection}"]`);
+    if (activeItem) {
+        activeItem.classList.add('active');
+    }
+}
 

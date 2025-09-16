@@ -11,6 +11,7 @@ const path = require('path');
 // Definice modulů pro sloučení
 const modulesToMerge = {
     'script.js': [
+        'script.js', // Původní script.js s inicializací
         'src/shared/services/firebase-service.js',
         'src/shared/utils/date-utils.js',
         'src/shared/utils/validation-utils.js',
@@ -19,15 +20,9 @@ const modulesToMerge = {
         'src/admin/automaticke-smeny/automaticke-smeny.js',
         'src/admin/sprava-pracovist/sprava-pracovist.js',
         'src/admin/sprava-uzivatelu/sprava-uzivatelu.js',
-        'src/app.js' // Hlavní inicializace
+        // src/app.js se nepřidává, protože inicializace je už v původním script.js
     ],
-    'styles.css': [
-        'src/admin/kalendar-smen/kalendar-smen.css',
-        'src/admin/sprava-smen/sprava-smen.css',
-        'src/admin/automaticke-smeny/automaticke-smeny.css',
-        'src/admin/sprava-pracovist/sprava-pracovist.css',
-        'src/admin/sprava-uzivatelu/sprava-uzivatelu.css',
-    ]
+    // styles.css se nekopíruje, protože se kopíruje přímo
 };
 
 // Cílová složka
@@ -84,9 +79,20 @@ function copyFile(sourceFile, targetFile) {
             fs.mkdirSync(targetDir, { recursive: true });
         }
 
-        // Kopíruj soubor
-        fs.copyFileSync(sourceFile, targetFile);
-        console.log(`✅ Zkopírováno: ${sourceFile} → ${targetFile}`);
+        // Speciální úprava pro index.html - odstranění duplicitních script tagů
+        if (sourceFile === 'index.html') {
+            let content = fs.readFileSync(sourceFile, 'utf8');
+            
+            // Odstranění script tagů pro moduly, které jsou už sloučené
+            content = content.replace(/<script src="src\/shared\/utils\/validation-utils\.js"><\/script>\s*/g, '');
+            
+            fs.writeFileSync(targetFile, content);
+            console.log(`✅ Zkopírováno a upraveno: ${sourceFile} → ${targetFile}`);
+        } else {
+            // Kopíruj soubor normálně
+            fs.copyFileSync(sourceFile, targetFile);
+            console.log(`✅ Zkopírováno: ${sourceFile} → ${targetFile}`);
+        }
         return true;
     } catch (error) {
         console.error(`❌ Chyba při kopírování ${sourceFile}:`, error.message);
@@ -109,21 +115,19 @@ function buildProduction() {
     totalSuccess++;
     totalFiles++;
     
-    // Sloučení CSS souborů
-    console.log('\n🎨 Slučuji CSS moduly...');
-    mergeFiles(modulesToMerge['styles.css'], path.join(publicDir, 'styles.css'));
-    totalSuccess++;
-    totalFiles++;
+    // CSS soubory se nekopírují, protože se kopírují přímo
     
     // Kopírování ostatních souborů
     console.log('\n📋 Kopíruji ostatní soubory...');
-    const filesToCopy = ['index.html', 'firebase.js'];
+    const filesToCopy = ['index.html', 'firebase.js', 'styles.css'];
     filesToCopy.forEach(file => {
         totalFiles++;
         if (copyFile(file, path.join(publicDir, file))) {
             totalSuccess++;
         }
     });
+    
+    // Poznámka: script.js se nekopíruje, protože je nahrazen sloučeným souborem
     
     console.log(`\n📊 Dokončeno: ${totalSuccess}/${totalFiles} operací úspěšných`);
     

@@ -7,6 +7,7 @@ class SpravaSmenManager {
     constructor(firebaseService) {
         this.firebaseService = firebaseService;
         this.currentWorkplaceFilter = 'all';
+        this.currentEmployeeFilter = 'all';
         this.shifts = [];
         this.users = [];
         this.workplaces = [];
@@ -19,7 +20,7 @@ class SpravaSmenManager {
         try {
             await this.nacistData();
             this.nastavitEventListeners();
-            this.updateWorkplaceFilterButtons();
+            this.updateFilterSelects();
             this.updateAdminShiftsList();
         } catch (error) {
             console.error('Chyba při inicializaci správy směn:', error);
@@ -34,6 +35,7 @@ class SpravaSmenManager {
         this.shifts = window.shifts || [];
         this.users = window.users || [];
         this.workplaces = window.workplaces || [];
+        
     }
 
     /**
@@ -128,42 +130,76 @@ class SpravaSmenManager {
     }
 
     /**
-     * Aktualizace tlačítek pro filtrování podle pracoviště
+     * Aktualizace select elementů pro filtrování
      */
-    updateWorkplaceFilterButtons() {
-        const filterButtonsContainer = document.getElementById('workplace-filter-buttons');
-        if (!filterButtonsContainer) return;
+    updateFilterSelects() {
+        this.updateWorkplaceSelect();
+        this.updateEmployeeSelect();
+        this.nastavitFilterEventListeners();
+    }
+
+    /**
+     * Aktualizace select elementu pro pracoviště
+     */
+    updateWorkplaceSelect() {
+        const workplaceSelect = document.getElementById('workplace-filter-select');
+        if (!workplaceSelect) return;
         
-        // Vytvoření tlačítek pro všechna pracoviště
-        const workplaceButtons = this.workplaces.map(workplace => 
-            `<button class="filter-btn" data-workplace="${workplace.name}">
-                <i class="fas fa-building"></i> ${workplace.name}
-            </button>`
+        // Vytvoření option elementů pro všechna pracoviště
+        const workplaceOptions = this.workplaces.map(workplace => 
+            `<option value="${workplace.name}">${workplace.name}</option>`
         ).join('');
         
-        filterButtonsContainer.innerHTML = `
-            <button class="filter-btn ${this.currentWorkplaceFilter === 'all' ? 'active' : ''}" data-workplace="all">
-                <i class="fas fa-th"></i> Vše
-            </button>
-            ${workplaceButtons}
+        workplaceSelect.innerHTML = `
+            <option value="all">Všechna pracoviště</option>
+            ${workplaceOptions}
         `;
         
-        // Přidání event listenerů
-        filterButtonsContainer.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                // Odstranění active třídy ze všech tlačítek
-                filterButtonsContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                
-                // Přidání active třídy na kliknuté tlačítko
-                e.target.classList.add('active');
-                
-                // Nastavení aktuálního filtru
-                this.currentWorkplaceFilter = e.target.dataset.workplace;
-                
-                // Aktualizace seznamu směn
+        // Nastavení aktuální hodnoty
+        workplaceSelect.value = this.currentWorkplaceFilter;
+    }
+
+    /**
+     * Aktualizace select elementu pro zaměstnance
+     */
+    updateEmployeeSelect() {
+        const employeeSelect = document.getElementById('employee-filter-select');
+        if (!employeeSelect) return;
+        
+        // Vytvoření option elementů pro všechny zaměstnance
+        const employeeOptions = this.users.map(user => 
+            `<option value="${user.id}">${user.name}</option>`
+        ).join('');
+        
+        employeeSelect.innerHTML = `
+            <option value="all">Všichni zaměstnanci</option>
+            ${employeeOptions}
+        `;
+        
+        // Nastavení aktuální hodnoty
+        employeeSelect.value = this.currentEmployeeFilter;
+    }
+
+    /**
+     * Nastavení event listenerů pro select elementy
+     */
+    nastavitFilterEventListeners() {
+        const workplaceSelect = document.getElementById('workplace-filter-select');
+        const employeeSelect = document.getElementById('employee-filter-select');
+        
+        if (workplaceSelect) {
+            workplaceSelect.addEventListener('change', (e) => {
+                this.currentWorkplaceFilter = e.target.value;
                 this.updateAdminShiftsList();
             });
-        });
+        }
+        
+        if (employeeSelect) {
+            employeeSelect.addEventListener('change', (e) => {
+                this.currentEmployeeFilter = e.target.value;
+                this.updateAdminShiftsList();
+            });
+        }
     }
 
     /**
@@ -242,6 +278,7 @@ class SpravaSmenManager {
      */
     aktualizovatData() {
         this.nacistData();
+        this.updateFilterSelects();
         this.updateAdminShiftsList();
     }
 
@@ -264,20 +301,28 @@ class SpravaSmenManager {
      * Získání počtu směn podle filtru
      */
     getFilteredShiftsCount() {
-        if (this.currentWorkplaceFilter === 'all') {
-            return this.shifts.length;
-        }
-        return this.shifts.filter(shift => shift.position === this.currentWorkplaceFilter).length;
+        return this.getFilteredShifts().length;
     }
 
     /**
      * Získání směn podle filtru
      */
     getFilteredShifts() {
-        if (this.currentWorkplaceFilter === 'all') {
-            return this.shifts;
+        let filteredShifts = this.shifts;
+        
+        // Filtrování podle pracoviště
+        if (this.currentWorkplaceFilter !== 'all') {
+            filteredShifts = filteredShifts.filter(shift => shift.position === this.currentWorkplaceFilter);
         }
-        return this.shifts.filter(shift => shift.position === this.currentWorkplaceFilter);
+        
+        // Filtrování podle zaměstnance
+        if (this.currentEmployeeFilter !== 'all') {
+            filteredShifts = filteredShifts.filter(shift => 
+                shift.assignedUsers && shift.assignedUsers.includes(this.currentEmployeeFilter)
+            );
+        }
+        
+        return filteredShifts;
     }
 }
 

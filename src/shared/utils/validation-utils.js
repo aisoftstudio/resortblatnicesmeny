@@ -5,10 +5,10 @@
 
 class ValidationUtils {
     /**
-     * Validace PINu (5 číslic)
+     * Validace PINu (4 číslice)
      */
     static validatePin(pin) {
-        const pinRegex = /^\d{5}$/;
+        const pinRegex = /^\d{4}$/;
         return pinRegex.test(pin);
     }
 

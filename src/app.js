@@ -20,10 +20,20 @@ let automatickeSmenyManager = null;
 let spravaPracovistManager = null;
 let spravaUzivateluManager = null;
 
+// Ochrana proti dvojitému spuštění
+let appInitialized = false;
+
 /**
  * Inicializace aplikace
  */
 async function initializeApp() {
+    // Ochrana proti dvojitému spuštění
+    if (appInitialized) {
+        console.log('⚠️ Aplikace už je inicializována, přeskočuji...');
+        return;
+    }
+    
+    appInitialized = true;
     console.log('🚀 Spouštím MODULÁRNÍ VERZI aplikace!');
     console.log('📦 Všechny Admin sekce jsou migrovány do modulů');
     console.log('🔧 Manager třídy:', {
@@ -127,12 +137,20 @@ async function loadData() {
         if (users.length === 0) {
             const adminUser = {
                 id: 'admin-1',
-                pin: '12345',
+                pin: '0125',
                 name: 'Admin',
                 isAdmin: true
             };
             users.push(adminUser);
             await saveData(); // Uloží admin uživatele do Firebase
+        } else {
+            // Aktualizace existujícího admina s novým PINem
+            const existingAdmin = users.find(u => u.isAdmin && u.pin === '12345');
+            if (existingAdmin) {
+                console.log('🔄 Aktualizuji existujícího admina s novým PINem...');
+                existingAdmin.pin = '0125';
+                await saveData(); // Uloží aktualizovaného admina do Firebase
+            }
         }
         
         console.log('📊 Data úspěšně načtena:');
@@ -400,4 +418,9 @@ window.switchAdminTab = switchAdminTab;
 window.showErrorMessage = showErrorMessage;
 
 // Spuštění aplikace při načtení DOM
-document.addEventListener('DOMContentLoaded', initializeApp);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    // DOM už je načtený, spusť ihned
+    initializeApp();
+}

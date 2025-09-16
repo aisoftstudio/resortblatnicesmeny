@@ -59,6 +59,104 @@ body {
     z-index: 10;
 }
 
+/* Admin stránka s animovaným pozadím */
+#admin-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animované pozadí pro admin */
+#admin-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Animované částice v pozadí pro admin */
+#admin-page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    animation: particles 15s ease-in-out infinite;
+    pointer-events: none;
+}
+
+
+/* Styly pro aktivní taby s decentními barvami */
+#admin-calendar-tab.active {
+    background: rgba(59, 130, 246, 0.15);
+    border-bottom: 3px solid rgba(59, 130, 246, 0.6);
+    color: #1e40af;
+}
+
+#admin-shifts-tab.active {
+    background: rgba(16, 185, 129, 0.15);
+    border-bottom: 3px solid rgba(16, 185, 129, 0.6);
+    color: #047857;
+}
+
+#admin-automatic-tab.active {
+    background: rgba(168, 85, 247, 0.15);
+    border-bottom: 3px solid rgba(168, 85, 247, 0.6);
+    color: #7c3aed;
+}
+
+#admin-workplaces-tab.active {
+    background: rgba(245, 158, 11, 0.15);
+    border-bottom: 3px solid rgba(245, 158, 11, 0.6);
+    color: #d97706;
+}
+
+#admin-users-tab.active {
+    background: rgba(239, 68, 68, 0.15);
+    border-bottom: 3px solid rgba(239, 68, 68, 0.6);
+    color: #dc2626;
+}
+
+/* Hover efekty pro admin taby */
+#admin-calendar-tab:hover:not(.active) {
+    background: rgba(59, 130, 246, 0.08);
+    color: #1e40af;
+}
+
+#admin-shifts-tab:hover:not(.active) {
+    background: rgba(16, 185, 129, 0.08);
+    color: #047857;
+}
+
+#admin-automatic-tab:hover:not(.active) {
+    background: rgba(168, 85, 247, 0.08);
+    color: #7c3aed;
+}
+
+#admin-workplaces-tab:hover:not(.active) {
+    background: rgba(245, 158, 11, 0.08);
+    color: #d97706;
+}
+
+#admin-users-tab:hover:not(.active) {
+    background: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
+}
+
 .btn {
     padding: 12px 24px;
     border: none;
@@ -109,46 +207,98 @@ body {
     background: #dc2626;
 }
 
-/* Přihlašovací stránka - Základní styly pro desktop */
+/* Přihlašovací stránka */
 #login-page {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     width: 100vw;
-    padding: 20px;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 60px 0 40px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
     position: fixed;
     top: 0;
     left: 0;
+    overflow: hidden;
 }
 
-/* Zajištění centrování pro všechny zařízení větší než 768px */
-@media (min-width: 769px) {
-    #login-page {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
+/* Animované pozadí */
+#login-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* Animované částice v pozadí */
+#login-page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    animation: particles 15s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes particles {
+    0%, 100% { 
+        opacity: 0.3;
+        transform: scale(1) rotate(0deg);
     }
-    
-    .login-container {
-        max-width: 450px;
-        width: 100%;
-        padding: 40px;
-        border-radius: 20px;
-        background: white;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    50% { 
+        opacity: 0.6;
+        transform: scale(1.1) rotate(180deg);
     }
 }
 
 .login-container {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2);
     padding: 40px;
     width: 100%;
     max-width: 450px;
+    margin: 0 auto;
+    position: relative;
+    animation: slideInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center;
+}
+
+@keyframes slideInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .login-header {
@@ -159,7 +309,7 @@ body {
 .logo {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -167,6 +317,33 @@ body {
     margin: 0 auto 20px;
     font-size: 32px;
     color: white;
+    position: relative;
+    animation: logoPulse 2s ease-in-out infinite;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.logo::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: logoGlow 2s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes logoPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes logoGlow {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.1; }
 }
 
 .login-header h1 {
@@ -194,6 +371,26 @@ body {
     margin-bottom: 8px;
     font-weight: 500;
     color: #374151;
+    text-align: center;
+}
+
+.form-help {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.admin-protected {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: #10b981;
+    font-size: 14px;
+    cursor: help;
 }
 
 .input-container {
@@ -209,12 +406,22 @@ body {
     text-align: center;
     letter-spacing: 4px;
     font-family: 'Courier New', monospace;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
 }
 
 .input-container input:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.input-container input:hover {
+    border-color: #667eea;
+    transform: translateY(-1px);
 }
 
 .input-container i {
@@ -228,26 +435,85 @@ body {
 .login-btn {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     border: none;
     border-radius: 12px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.login-btn:hover::before {
+    left: 100%;
 }
 
 .login-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2, #667eea);
+}
+
+.login-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
 .login-btn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
     transform: none;
+}
+
+.login-btn:disabled::before {
+    display: none;
+}
+
+/* Vylepšené loading animace */
+.btn-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.btn-loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animace pro error zprávy */
+.error-message {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }
 
 .error-message {
@@ -311,11 +577,15 @@ body {
     font-size: 14px;
 }
 
-/* Header */
+/* Header - Moderní responzivní design */
 .header {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid #1d4ed8;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .header-content {
@@ -326,48 +596,720 @@ body {
     justify-content: space-between;
     align-items: center;
     height: 80px;
+    transition: all 0.3s ease;
 }
 
 .header-left {
     display: flex;
     align-items: center;
     gap: 16px;
+    flex: 1;
+    min-width: 0;
 }
 
 .logo-small {
     width: 48px;
     height: 48px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: rgba(255, 255, 255, 0.25);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 20px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.logo-small:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.header-info {
+    min-width: 0;
+    flex: 1;
 }
 
 .header-info h1 {
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 700;
     color: white;
     margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .header-info p {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.95);
     font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .header-actions {
     display: flex;
     gap: 12px;
+    align-items: center;
 }
+
+/* Hamburger menu pro mobilní zařízení */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-toggle.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Mobilní menu */
+.mobile-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.mobile-menu.active {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mobile-menu-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(4px);
+}
+
+.mobile-menu-item i {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Mobilní menu divider */
+.mobile-menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 8px 0;
+}
+
+/* Mobilní sekce tlačítka */
+.mobile-section-item {
+    position: relative;
+}
+
+.mobile-section-item.active {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.mobile-section-item.active::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background: #10b981;
+    border-radius: 50%;
+}
+
+/* Vylepšené tlačítko odhlášení */
+.btn-logout {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-logout:active {
+    transform: translateY(0);
+}
+
 
 /* Hlavní obsah */
 .main-content {
     max-width: 1200px;
     margin: 0 auto;
     padding: 30px 20px;
+    background: #f8fafc;
+    min-height: calc(100vh - 80px);
+}
+
+/* Moderní design systém pro admin sekce */
+.admin-section {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+    border-radius: 16px 16px 0 0;
+}
+
+/* Moderní karty */
+.modern-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modern-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    border-color: #e2e8f0;
+}
+
+.modern-card:hover::before {
+    opacity: 1;
+}
+
+/* Moderní hlavičky karet */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-title i {
+    color: #3b82f6;
+    font-size: 18px;
+}
+
+.card-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Moderní tlačítka */
+.modern-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.modern-btn:hover::before {
+    left: 100%;
+}
+
+.modern-btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.modern-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.modern-btn-secondary {
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.modern-btn-secondary:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.modern-btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.modern-btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.modern-btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.modern-btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Moderní tagy a labely */
+.modern-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modern-tag-admin {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+}
+
+.modern-tag-user {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.modern-tag-workplace {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.modern-tag-shift {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+}
+
+/* Moderní prázdný stav */
+.modern-empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #64748b;
+}
+
+.modern-empty-state i {
+    font-size: 72px;
+    margin-bottom: 24px;
+    color: #cbd5e1;
+    opacity: 0.8;
+}
+
+.modern-empty-state h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #475569;
+}
+
+.modern-empty-state p {
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Moderní filtry */
+.modern-filter {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.modern-filter-label {
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+}
+
+.modern-filter-label i {
+    color: #3b82f6;
+    font-size: 18px;
+}
+
+.modern-filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.modern-filter-btn {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.modern-filter-btn:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background: #eff6ff;
+    transform: translateY(-1px);
+}
+
+.modern-filter-btn.active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-color: #3b82f6;
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.modern-filter-btn i {
+    font-size: 14px;
+}
+
+/* Moderní select elementy pro filtrování */
+.modern-filter {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.modern-filter-label {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    margin-bottom: 0;
+}
+
+.modern-filter-label i {
+    color: #3b82f6;
+    font-size: 18px;
+}
+
+.modern-filter-selects {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-select-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+}
+
+.filter-select-group label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.filter-select-group label i {
+    color: #3b82f6;
+    font-size: 14px;
+}
+
+.modern-select {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 160px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.modern-select:hover {
+    border-color: #3b82f6;
+    background-color: #f8fafc;
+}
+
+.modern-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modern-select option {
+    padding: 8px;
+    color: #374151;
+}
+
+/* Responsivní design pro select elementy */
+@media (max-width: 768px) {
+    .modern-filter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .modern-filter-selects {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+    
+    .filter-select-group {
+        min-width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .modern-select {
+        min-width: 100%;
+    }
+}
+
+/* Moderní sekce - přepsání starých stylů */
+.admin-section .section-header {
+    display: none; /* Skryjeme staré section-header */
+}
+
+.admin-section .card-header {
+    margin-bottom: 24px;
+}
+
+.admin-section .card-title {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.admin-section .card-subtitle {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 0;
+}
+
+/* Moderní info karta */
+.info-card {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #3b82f6;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.info-card .card-title {
+    color: #1e40af;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.info-card .card-title i {
+    color: #3b82f6;
+}
+
+.info-card .card-subtitle {
+    color: #1e40af;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.info-card p {
+    color: #1e40af;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Moderní seznamy */
+.shifts-list,
+.automatic-shifts-list,
+.workplaces-list,
+.users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Moderní prázdné stavy */
+.empty-shifts,
+.empty-workplaces,
+.empty-users {
+    text-align: center;
+    padding: 80px 20px;
+    color: #64748b;
+}
+
+.empty-shifts i,
+.empty-workplaces i,
+.empty-users i {
+    font-size: 72px;
+    margin-bottom: 24px;
+    color: #cbd5e1;
+    opacity: 0.8;
+}
+
+.empty-shifts h3,
+.empty-workplaces h3,
+.empty-users h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #475569;
+}
+
+.empty-shifts p,
+.empty-workplaces p,
+.empty-users p {
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .content-grid {
@@ -392,22 +1334,34 @@ body {
     gap: 12px;
 }
 
-/* Kalendář */
+/* Moderní kalendář */
 .calendar {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
     overflow: hidden;
+    position: relative;
+}
+
+.calendar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    border-radius: 16px 16px 0 0;
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid #e5e7eb;
-    background: #f9fafb;
+    padding: 24px;
+    border-bottom: 1px solid #f1f5f9;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
 }
 
 .calendar-title {
@@ -425,36 +1379,41 @@ body {
 }
 
 .calendar-nav button {
-    width: 36px;
-    height: 36px;
-    border: 1px solid #d1d5db;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #e2e8f0;
     background: white;
-    border-radius: 6px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #64748b;
 }
 
 .calendar-nav button:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
+    background: #f8fafc;
+    border-color: #3b82f6;
+    color: #3b82f6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    background: #f3f4f6;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
 }
 
 .calendar-weekday {
-    padding: 12px 8px;
+    padding: 16px 8px;
     text-align: center;
-    font-size: 12px;
-    font-weight: 600;
-    color: #6b7280;
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .calendar-days {
@@ -463,32 +1422,38 @@ body {
 }
 
 .calendar-day {
-    min-height: 60px;
-    padding: 8px;
-    border: 1px solid #e5e7eb;
+    min-height: 70px;
+    padding: 12px 8px;
+    border: 1px solid #f1f5f9;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     background: white;
 }
 
 .calendar-day:hover {
-    background: #f0f9ff;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-color: #3b82f6;
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
 .calendar-day.other-month {
-    background: #f9fafb;
-    color: #9ca3af;
+    background: #f8fafc;
+    color: #94a3b8;
+    opacity: 0.6;
 }
 
 .calendar-day.today {
-    background: #dbeafe;
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
     border-color: #3b82f6;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
 .calendar-day.selected {
-    background: #3b82f6;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .calendar-day-number {
@@ -504,13 +1469,15 @@ body {
 }
 
 .shift-indicator {
-    background: #3b82f6;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
     font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 10px;
+    padding: 4px 8px;
+    border-radius: 12px;
     text-align: center;
-    font-weight: 500;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    letter-spacing: 0.3px;
 }
 
 /* Směny */
@@ -527,42 +1494,215 @@ body {
     gap: 16px;
 }
 
+/* Kompaktní shift karty */
 .shift-card {
     background: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
-}
-
-.shift-header {
+    border-radius: 8px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
+    min-height: 48px;
 }
 
-.shift-info h4 {
+.shift-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.shift-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #e2e8f0;
+}
+
+.shift-card:hover::before {
+    opacity: 1;
+}
+
+/* Kompaktní shift obsah */
+.shift-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.shift-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.shift-workplace {
     font-size: 16px;
     font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 4px;
+    color: #1e293b;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.shift-time {
-    color: #6b7280;
+.shift-workplace i {
+    color: #3b82f6;
     font-size: 14px;
+}
+
+.shift-time {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.shift-actions {
+.shift-time i {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+/* Status indikátor */
+.shift-status {
     display: flex;
+    align-items: center;
     gap: 8px;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.available {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.status-badge.occupied {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+/* Disabled tlačítka */
+.modern-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.modern-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Klikací shift karty */
+.clickable-shift {
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.clickable-shift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    border-color: #3b82f6;
+}
+
+.clickable-shift:hover::before {
+    opacity: 1;
+}
+
+/* Ikona odkazu */
+.shift-link-icon {
+    color: #64748b;
+    font-size: 12px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.clickable-shift:hover .shift-link-icon {
+    color: #3b82f6;
+    opacity: 1;
+    transform: translateX(2px);
+}
+
+/* Management shift karty používají stejný styl jako pracoviště */
+
+/* Informace o uživateli v admin kartách */
+.shift-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.shift-user-info .user-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.shift-user-info .modern-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+}
+
+.shift-user-info .modern-btn i {
+    font-size: 10px;
+}
+
+/* Warning tlačítko */
+.modern-btn-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.modern-btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    background: linear-gradient(135deg, #d97706, #b45309);
+}
+
+.modern-btn-warning:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+/* Skrytí starých elementů */
+.shift-header,
+.shift-actions,
+.shift-users {
+    display: none;
 }
 
 .shift-users {
@@ -587,14 +1727,24 @@ body {
 }
 
 .user-tag {
-    background: #f3f4f6;
-    padding: 6px 12px;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    padding: 8px 16px;
     border-radius: 20px;
-    font-size: 12px;
-    color: #374151;
+    font-size: 13px;
+    color: #475569;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.user-tag:hover {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-color: #3b82f6;
+    color: #3b82f6;
+    transform: translateY(-1px);
 }
 
 .user-tag .remove-btn {
@@ -616,35 +1766,63 @@ body {
     font-style: italic;
 }
 
-/* Taby */
+/* Moderní taby */
 .tabs {
     display: flex;
-    border-bottom: 2px solid #e5e7eb;
-    margin-bottom: 30px;
+    background: white;
+    border-radius: 12px;
+    padding: 8px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
 }
 
 .tab {
     padding: 12px 24px;
     background: none;
     border: none;
-    border-bottom: 2px solid transparent;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 500;
-    color: #6b7280;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.tab:hover::before {
+    left: 100%;
 }
 
 .tab:hover {
-    color: #374151;
+    color: #3b82f6;
+    background: #f8fafc;
+    transform: translateY(-1px);
 }
 
 .tab.active {
-    color: #3b82f6;
-    border-bottom-color: #3b82f6;
+    color: white;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.tab.active::before {
+    display: none;
 }
 
 .tab-content {
@@ -653,6 +1831,86 @@ body {
 
 .tab-content.active {
     display: block;
+}
+
+/* Styly pro obsah admin sekcí s decentními barvami */
+#admin-calendar-content.active {
+    background: rgba(59, 130, 246, 0.05);
+    border-left: 4px solid rgba(59, 130, 246, 0.3);
+    border-right: 4px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+}
+
+#admin-shifts-content.active {
+    background: rgba(16, 185, 129, 0.05);
+    border-left: 4px solid rgba(16, 185, 129, 0.3);
+    border-right: 4px solid rgba(16, 185, 129, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+}
+
+#admin-automatic-content.active {
+    background: rgba(168, 85, 247, 0.05);
+    border-left: 4px solid rgba(168, 85, 247, 0.3);
+    border-right: 4px solid rgba(168, 85, 247, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.1);
+}
+
+#admin-workplaces-content.active {
+    background: rgba(245, 158, 11, 0.05);
+    border-left: 4px solid rgba(245, 158, 11, 0.3);
+    border-right: 4px solid rgba(245, 158, 11, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+}
+
+#admin-users-content.active {
+    background: rgba(239, 68, 68, 0.05);
+    border-left: 4px solid rgba(239, 68, 68, 0.3);
+    border-right: 4px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+}
+
+/* Animace pro přechody mezi admin sekcemi */
+.tab-content {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.tab-content.active {
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeInContent 0.4s ease-out;
+}
+
+@keyframes fadeInContent {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 /* Modaly */
@@ -676,12 +1934,26 @@ body {
 
 .modal-content {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
     width: 100%;
     max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+    border-radius: 16px 16px 0 0;
 }
 
 .modal-header {
@@ -744,19 +2016,33 @@ body {
     min-width: 100px;
 }
 
-/* Formuláře */
-input, select {
+/* Moderní formuláře */
+input, select, textarea {
     width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
+    padding: 14px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
     font-size: 14px;
-    transition: border-color 0.2s ease;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    color: #1e293b;
 }
 
-input:focus, select:focus {
+input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+input:hover, select:hover, textarea:hover {
+    border-color: #cbd5e1;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
 }
 
 /* Success message */
@@ -863,10 +2149,19 @@ input:focus, select:focus {
     gap: 0.25rem;
 }
 
+.user-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+}
+
 .user-name {
     font-weight: 600;
     color: #333;
-    font-size: 1.1rem;
+    font-size: 1.4rem;
+    flex: 1;
 }
 
 .user-role {
@@ -877,6 +2172,7 @@ input:focus, select:focus {
     padding: 0.25rem 0.5rem;
     border-radius: 12px;
     font-weight: 500;
+    flex-shrink: 0;
 }
 
 .user-role.admin {
@@ -893,7 +2189,7 @@ input:focus, select:focus {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 0.5rem;
+    flex-shrink: 0;
 }
 
 .user-pin-label {
@@ -917,31 +2213,6 @@ input:focus, select:focus {
     gap: 0.5rem;
 }
 
-.user-stats {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid #eee;
-}
-
-.user-stats-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.user-stats-label {
-    font-size: 0.8rem;
-    color: #666;
-}
-
-.user-stats-value {
-    font-weight: 600;
-    color: #007bff;
-    font-size: 1.1rem;
-}
 
 .empty-users {
     text-align: center;
@@ -998,43 +2269,346 @@ input:focus, select:focus {
     gap: 0.25rem;
 }
 
+.workplace-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
 .workplace-name {
     font-weight: 600;
     color: #333;
-    font-size: 1.1rem;
+    font-size: 1.4rem;
+    flex: 1;
 }
 
-.workplace-description {
-    font-size: 0.9rem;
-    color: #666;
-    margin-top: 0.5rem;
-}
-
-.workplace-hours {
+/* Sloupce pro směny */
+.shift-columns {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    background: #f8f9fa;
-    border-radius: 4px;
+    width: 100%;
+    gap: 20px;
 }
 
-.workplace-hours-label {
-    font-size: 0.85rem;
-    color: #666;
+.shift-column {
+    display: flex;
+    align-items: center;
+}
+
+.workplace-column {
+    width: 200px; /* Šířka na ~20 znaků */
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.time-column {
+    width: 120px; /* Šířka pro čas */
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #10b981; /* Zelená barva */
+    flex-shrink: 0;
+}
+
+.date-column {
+    width: 100px; /* Šířka pro datum */
     font-weight: 500;
+    font-size: 0.9rem;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+/* Sloupce pro pracoviště */
+.workplace-columns {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.workplace-name-column {
+    width: 200px; /* Šířka na ~20 znaků */
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.workplace-time-column {
+    width: 120px; /* Šířka pro čas */
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+/* Responzivní styly pro sloupce směn */
+@media (max-width: 768px) {
+    .shift-columns {
+        gap: 12px;
+    }
+    
+    .workplace-column {
+        width: 150px;
+        font-size: 1.2rem;
+    }
+    
+    .time-column {
+        width: 100px;
+        font-size: 0.85rem;
+    }
+    
+    .date-column {
+        width: 80px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Responzivní styly pro sloupce pracovišť */
+@media (max-width: 768px) {
+    .workplace-columns {
+        gap: 12px;
+    }
+    
+    .workplace-name-column {
+        width: 150px;
+        font-size: 1.2rem;
+    }
+    
+    .workplace-time-column {
+        width: 100px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Sloupce pro automatické směny */
+.automatic-columns {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.automatic-column {
+    display: flex;
+    align-items: center;
+}
+
+.automatic-column.workplace-column {
+    width: 200px; /* Šířka na ~20 znaků */
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.automatic-column.time-column {
+    width: 120px; /* Šířka pro čas */
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #10b981; /* Zelená barva */
+    flex-shrink: 0;
+}
+
+.automatic-column.days-column {
+    width: 150px; /* Šířka pro dny */
+    flex-shrink: 0;
+}
+
+.automatic-column.period-column {
+    width: 120px; /* Šířka pro období */
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.automatic-day-tag {
+    display: inline-block;
+    background: #e2e8f0;
+    color: #475569;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-right: 4px;
+}
+
+/* Responzivní styly pro sloupce automatických směn */
+@media (max-width: 768px) {
+    .automatic-columns {
+        gap: 12px;
+    }
+    
+    .automatic-column.workplace-column {
+        width: 150px;
+        font-size: 1.2rem;
+    }
+    
+    .automatic-column.time-column {
+        width: 100px;
+        font-size: 0.85rem;
+    }
+    
+    .automatic-column.days-column {
+        width: 120px;
+    }
+    
+    .automatic-column.period-column {
+        width: 100px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Sloupce pro uživatele */
+.user-columns {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.user-column {
+    display: flex;
+    align-items: center;
+}
+
+.user-name-column {
+    width: 200px; /* Šířka na ~20 znaků */
+    font-weight: 600;
+    color: #333;
+    font-size: 1.4rem;
+    flex: 1;
+}
+
+.user-role-column {
+    width: 100px; /* Šířka pro roli */
+    flex-shrink: 0;
+}
+
+.user-pin-column {
+    width: 100px; /* Šířka pro PIN */
+    flex-shrink: 0;
+}
+
+/* Responzivní styly pro sloupce uživatelů */
+@media (max-width: 768px) {
+    .user-columns {
+        gap: 12px;
+    }
+    
+    .user-name-column {
+        width: 150px;
+        font-size: 1.2rem;
+    }
+    
+    .user-role-column {
+        width: 80px;
+    }
+    
+    .user-pin-column {
+        width: 80px;
+    }
+}
+
+
+.workplace-hours {
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+.workplace-date {
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+.workplace-date-text {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #64748b;
 }
 
 .workplace-hours-time {
     font-family: 'Courier New', monospace;
     font-weight: 600;
-    color: #28a745;
+    font-size: 0.95rem;
+}
+
+.time-separator {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Pevný čas - zelený */
+.time-start.fixed,
+.time-end.fixed {
+    color: #10b981;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+/* Nepevný čas - šedý */
+.time-start.not-fixed,
+.time-end.not-fixed {
+    color: #9ca3af;
+    font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .workplace-actions {
     display: flex;
     gap: 0.5rem;
+    align-items: center;
+}
+
+/* Status badge v workplace kartách */
+.workplace-card .status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.workplace-card .status-badge.available {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.workplace-card .status-badge.occupied {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+/* Informace o uživateli v workplace kartách */
+.workplace-card .shift-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.workplace-card .shift-user-info .user-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.workplace-card .shift-user-info .modern-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+}
+
+.workplace-card .shift-user-info .modern-btn i {
+    font-size: 10px;
 }
 
 .workplace-stats {
@@ -1355,6 +2929,65 @@ input:focus, select:focus {
     border-left-color: #dc3545;
 }
 
+/* Specifické styly pro komponenty v admin sekcích s decentními barvami */
+
+/* Správa směn - zelené komponenty */
+#admin-shifts-content .shift-card {
+    background: #f8fafc !important;
+    border-left: 4px solid rgba(16, 185, 129, 0.6) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1) !important;
+}
+
+#admin-shifts-content .shift-card:hover {
+    background: #f1f5f9 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important;
+    border-left-color: rgba(16, 185, 129, 0.8) !important;
+}
+
+/* Automatické směny - fialové komponenty */
+#admin-automatic-content .automatic-rule-card {
+    background: #f8fafc !important;
+    border-left: 4px solid rgba(168, 85, 247, 0.6) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1) !important;
+}
+
+#admin-automatic-content .automatic-rule-card:hover {
+    background: #f1f5f9 !important;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.15) !important;
+    border-left-color: rgba(168, 85, 247, 0.8) !important;
+}
+
+/* Správa pracovišť - oranžové komponenty */
+#admin-workplaces-content .workplace-card {
+    background: #f8fafc !important;
+    border-left: 4px solid rgba(245, 158, 11, 0.6) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1) !important;
+}
+
+#admin-workplaces-content .workplace-card:hover {
+    background: #f1f5f9 !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15) !important;
+    border-left-color: rgba(245, 158, 11, 0.8) !important;
+}
+
+/* Správa uživatelů - červené komponenty */
+#admin-users-content .user-card {
+    background: #f8fafc !important;
+    border-left: 4px solid rgba(239, 68, 68, 0.6) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1) !important;
+}
+
+#admin-users-content .user-card:hover {
+    background: #f1f5f9 !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15) !important;
+    border-left-color: rgba(239, 68, 68, 0.8) !important;
+}
+
+
 .shift-card.occupied .shift-header {
     background: #f8f9fa;
 }
@@ -1364,23 +2997,63 @@ input:focus, select:focus {
     opacity: 0.6;
 }
 
-/* Responzivní design */
+/* Responzivní design - Vylepšená hlavička */
 @media (max-width: 768px) {
     .content-grid {
         grid-template-columns: 1fr;
         gap: 20px;
     }
     
+    /* Mobilní hlavička */
     .header-content {
-        flex-direction: column;
-        height: auto;
-        padding: 20px;
-        gap: 16px;
+        height: 70px;
+        padding: 0 16px;
+        position: relative;
+    }
+    
+    .header-left {
+        gap: 12px;
+    }
+    
+    .logo-small {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .header-info h1 {
+        font-size: 16px;
+        margin-bottom: 2px;
+    }
+    
+    .header-info p {
+        font-size: 12px;
+    }
+    
+    /* Hamburger menu */
+    .mobile-menu-toggle {
+        display: block;
     }
     
     .header-actions {
-        width: 100%;
-        justify-content: center;
+        gap: 8px;
+    }
+    
+    .btn-logout {
+        padding: 8px 12px;
+        font-size: 12px;
+        display: none; /* Skryjeme na mobilu, zobrazíme v hamburger menu */
+    }
+    
+    
+    /* Mobilní menu aktivní */
+    .mobile-menu.active {
+        display: block;
+    }
+    
+    /* Skrytí tab navigace na mobilu */
+    .tabs {
+        display: none;
     }
     
     .section-header {
@@ -1416,347 +3089,66 @@ input:focus, select:focus {
     }
 }
 
-/* Specifické styly pro různé typy zařízení */
-
-/* Desktop specifické styly */
-.desktop-device #login-page {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.desktop-device .login-container {
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    max-width: 450px;
-    width: 100%;
-    padding: 40px;
-    border-radius: 20px;
-    background: white;
-}
-
-.desktop-device .logo {
-    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
-}
-
-/* Tablet specifické styly */
-.tablet-device #login-page {
-    background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.tablet-device .login-container {
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    border: 2px solid rgba(59, 130, 246, 0.1);
-    max-width: 500px;
-    width: 100%;
-    padding: 50px;
-    border-radius: 20px;
-    background: white;
-}
-
-.tablet-device .logo {
-    background: linear-gradient(135deg, #0ea5e9, #0284c7);
-    box-shadow: 0 6px 12px rgba(14, 165, 233, 0.4);
-}
-
-/* Mobile specifické styly */
-.mobile-device #login-page {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-}
-
-.mobile-device .login-container {
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-}
-
-.mobile-device .logo {
-    background: linear-gradient(135deg, #ffffff, #f0f9ff);
-    color: #1e40af;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.mobile-device .login-header h1 {
-    color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.mobile-device .login-header p {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-/* Orientace specifické styly */
-.portrait-orientation .login-container {
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.landscape-orientation .login-container {
-    max-width: 400px;
-}
-
-/* Animace specifické pro zařízení */
-.desktop-device .login-container {
-    animation: desktopSlideIn 0.8s ease-out;
-}
-
-.tablet-device .login-container {
-    animation: tabletFadeIn 0.6s ease-out;
-}
-
-.mobile-device .login-container {
-    animation: mobileSlideUp 0.5s ease-out;
-}
-
-@keyframes desktopSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes tabletFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes mobileSlideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Hover efekty pouze pro desktop */
-.desktop-device .login-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 25px rgba(59, 130, 246, 0.4);
-}
-
-.desktop-device .logo:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
-}
-
-/* Styly pro tablety (768px - 1024px) */
-@media (max-width: 1024px) and (min-width: 769px) {
-    .login-container {
-        max-width: 500px;
-        padding: 50px;
-    }
-    
-    .login-header h1 {
-        font-size: 32px;
-    }
-    
-    .logo {
-        width: 100px;
-        height: 100px;
-        font-size: 40px;
-    }
-}
-
-/* Styly pro mobily (max-width: 768px) - Celá obrazovka */
-@media (max-width: 768px) {
-    #login-page {
-        padding: 0;
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-        display: flex;
-        align-items: stretch;
-        justify-content: stretch;
-    }
-    
-    .login-container {
-        width: 100%;
-        max-width: 100%;
-        height: 100vh;
-        padding: 20px;
-        border-radius: 0;
-        box-shadow: none;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: none;
-    }
-    
-    .login-header {
-        margin-bottom: 40px;
-        text-align: center;
-    }
-    
-    .logo {
-        width: 80px;
-        height: 80px;
-        font-size: 32px;
-        margin: 0 auto 20px;
-        background: linear-gradient(135deg, #ffffff, #f0f9ff);
-        color: #1e40af;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    }
-    
-    .login-header h1 {
-        font-size: 28px;
-        margin-bottom: 8px;
-        color: white;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    
-    .login-header p {
-        font-size: 16px;
-        color: rgba(255, 255, 255, 0.9);
-    }
-    
-    .login-form {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        margin-bottom: 0;
-    }
-    
-    .form-group {
-        margin-bottom: 25px;
-    }
-    
-    .form-group label {
-        color: white;
-        font-weight: 600;
-        margin-bottom: 12px;
-        font-size: 16px;
-    }
-    
-    .input-container input {
-        padding: 18px 50px 18px 20px;
-        font-size: 18px;
-        letter-spacing: 4px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border-radius: 12px;
-        backdrop-filter: blur(5px);
-    }
-    
-    .input-container input:focus {
-        border-color: rgba(255, 255, 255, 0.6);
-        background: rgba(255, 255, 255, 0.15);
-        outline: none;
-    }
-    
-    .input-container input::placeholder {
-        color: rgba(255, 255, 255, 0.6);
-    }
-    
-    .input-container i {
-        color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .login-btn {
-        padding: 18px;
-        font-size: 16px;
-        font-weight: 600;
-        background: linear-gradient(135deg, #ffffff, #f0f9ff);
-        color: #1e40af;
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        margin-top: 20px;
-    }
-    
-    .login-btn:hover {
-        background: linear-gradient(135deg, #f8fafc, #e0f2fe);
-        transform: translateY(-2px);
-        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
-    }
-    
-    .error-message {
-        background: rgba(239, 68, 68, 0.2);
-        border: 1px solid rgba(239, 68, 68, 0.4);
-        color: #fecaca;
-        backdrop-filter: blur(5px);
-    }
-}
-
-/* Styly pro malé mobily (max-width: 480px) - Celá obrazovka */
 @media (max-width: 480px) {
-    #login-page {
-        padding: 0;
-        background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+    /* Extra malé obrazovky */
+    .header-content {
+        height: 60px;
+        padding: 0 12px;
     }
     
-    .login-container {
-        width: 100%;
-        height: 100vh;
-        padding: 15px;
-        margin: 0;
-        border-radius: 0;
-        box-shadow: none;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
+    .logo-small {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
     }
     
-    .login-header {
-        margin-bottom: 30px;
-    }
-    
-    .logo {
-        width: 70px;
-        height: 70px;
-        font-size: 28px;
-        margin: 0 auto 15px;
-    }
-    
-    .login-header h1 {
-        font-size: 24px;
-        margin-bottom: 6px;
-    }
-    
-    .login-header p {
+    .header-info h1 {
         font-size: 14px;
     }
     
-    .form-group {
-        margin-bottom: 20px;
+    .header-info p {
+        font-size: 11px;
     }
     
-    .form-group label {
-        font-size: 15px;
-        margin-bottom: 10px;
+    .mobile-menu-toggle {
+        font-size: 20px;
+        padding: 6px;
     }
     
-    .input-container input {
-        padding: 16px 45px 16px 18px;
-        font-size: 16px;
-        letter-spacing: 3px;
-    }
-    
-    .login-btn {
+    .mobile-menu-content {
         padding: 16px;
-        font-size: 15px;
+        gap: 12px;
     }
     
-    /* Ostatní styly pro aplikaci */
+    .mobile-menu-item {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    .mobile-menu-item i {
+        font-size: 16px;
+        width: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    #login-page {
+        padding: 0;
+        background: white;
+    }
+    
+    .login-container {
+        padding: 24px;
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+        max-width: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
     .main-content {
         padding: 20px 10px;
     }
@@ -1771,207 +3163,5 @@ input:focus, select:focus {
     
     .tab {
         justify-content: center;
-    }
-}
-
-/* Styly pro velmi malé mobily (max-width: 360px) */
-@media (max-width: 360px) {
-    .login-container {
-        padding: 10px;
-    }
-    
-    .login-header {
-        margin-bottom: 25px;
-    }
-    
-    .logo {
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
-        margin-bottom: 12px;
-    }
-    
-    .login-header h1 {
-        font-size: 20px;
-        margin-bottom: 4px;
-    }
-    
-    .login-header p {
-        font-size: 13px;
-    }
-    
-    .form-group {
-        margin-bottom: 18px;
-    }
-    
-    .form-group label {
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-    
-    .input-container input {
-        padding: 14px 40px 14px 16px;
-        font-size: 15px;
-        letter-spacing: 2px;
-    }
-    
-    .login-btn {
-        padding: 14px;
-        font-size: 14px;
-    }
-}
-
-/* Landscape orientace pro mobily */
-@media (max-width: 768px) and (orientation: landscape) {
-    .login-container {
-        height: 100vh;
-        padding: 10px 20px;
-        justify-content: space-around;
-    }
-    
-    .login-header {
-        margin-bottom: 20px;
-    }
-    
-    .logo {
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
-        margin-bottom: 10px;
-    }
-    
-    .login-header h1 {
-        font-size: 20px;
-        margin-bottom: 4px;
-    }
-    
-    .login-header p {
-        font-size: 13px;
-    }
-    
-    .login-form {
-        flex: 0;
-    }
-    
-    .form-group {
-        margin-bottom: 15px;
-    }
-    
-    .input-container input {
-        padding: 12px 40px 12px 16px;
-        font-size: 15px;
-        letter-spacing: 2px;
-    }
-    
-    .login-btn {
-        padding: 12px;
-        font-size: 14px;
-        margin-top: 10px;
-    }
-}
-
-/* Zajištění, že na všech mobilních zařízeních bude celá obrazovka */
-@media (max-width: 768px) {
-    body {
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-    }
-    
-    #login-page {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 9999;
-    }
-    
-    .login-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
-    }
-}
-
-/* Specifické styly pro iOS zařízení */
-.ios-device .login-container {
-    min-height: 100vh;
-    min-height: 100dvh; /* Dynamic viewport height */
-    -webkit-overflow-scrolling: touch;
-}
-
-.ios-device .input-container input {
-    -webkit-appearance: none;
-    border-radius: 12px;
-}
-
-.ios-device .login-btn {
-    -webkit-appearance: none;
-    border-radius: 12px;
-}
-
-/* Specifické styly pro Android zařízení */
-.android-device .login-container {
-    min-height: 100vh;
-}
-
-.android-device .input-container input {
-    border-radius: 12px;
-}
-
-.android-device .login-btn {
-    border-radius: 12px;
-}
-
-/* Touch zařízení optimalizace */
-.touch-device .login-btn {
-    min-height: 44px; /* Minimální velikost pro touch */
-    min-width: 44px;
-}
-
-.touch-device .input-container input {
-    min-height: 44px; /* Minimální velikost pro touch */
-}
-
-.touch-device .logo {
-    cursor: pointer;
-}
-
-/* Zajištění správného zobrazení na všech zařízeních */
-@media (max-width: 768px) {
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-    
-    #login-page {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100vw;
-        height: 100vh;
-        height: 100dvh; /* Dynamic viewport height */
-        z-index: 9999;
-    }
-    
-    .login-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        box-sizing: border-box;
     }
 }

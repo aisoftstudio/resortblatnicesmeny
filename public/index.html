@@ -17,14 +17,13 @@
                 </div>
                 <h1>Resort Blatnice</h1>
                 <p>Systém správy směn</p>
-                <div class="version-badge">🚀 Modulární verze v2.0</div>
             </div>
             
             <form id="login-form" class="login-form">
                 <div class="form-group">
-                    <label for="pin">Zadejte váš PIN (5 číslic)</label>
+                    <label for="pin">Zadejte váš PIN (4 číslice)</label>
                     <div class="input-container">
-                        <input type="text" id="pin" name="pin" maxlength="5" placeholder="12345" required>
+                        <input type="text" id="pin" name="pin" maxlength="4" required>
                         <i class="fas fa-user"></i>
                     </div>
                 </div>
@@ -48,16 +47,57 @@
             <div class="header-content">
                 <div class="header-left">
                     <div class="logo-small">
-                        <i class="fas fa-users-cog"></i>
+                        <i class="fas fa-calendar-alt"></i>
                     </div>
                     <div class="header-info">
-                        <h1>Admin Panel - Resort Blatnice</h1>
-                        <p>Vítejte, <span id="admin-name">Admin</span></p>
+                        <h1>Resort Blatnice</h1>
+                        <p>Systém správy směn</p>
                     </div>
                 </div>
                 <div class="header-actions">
-                    <button id="logout-btn" class="btn btn-secondary">
+                    <button id="logout-btn" class="btn-logout">
                         <i class="fas fa-sign-out-alt"></i> Odhlásit se
+                    </button>
+                    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mobile-menu" id="mobile-menu">
+                <div class="mobile-menu-content">
+                    <div class="mobile-menu-item">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Admin: <span id="mobile-admin-name">Admin</span></span>
+                    </div>
+                    
+                    <div class="mobile-menu-divider"></div>
+                    
+                    <button class="mobile-menu-item mobile-section-item" data-section="calendar">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Kalendář směn</span>
+                    </button>
+                    <button class="mobile-menu-item mobile-section-item" data-section="shifts">
+                        <i class="fas fa-clock"></i>
+                        <span>Správa směn</span>
+                    </button>
+                    <button class="mobile-menu-item mobile-section-item" data-section="automatic">
+                        <i class="fas fa-magic"></i>
+                        <span>Automatické směny</span>
+                    </button>
+                    <button class="mobile-menu-item mobile-section-item" data-section="workplaces">
+                        <i class="fas fa-building"></i>
+                        <span>Správa pracovišť</span>
+                    </button>
+                    <button class="mobile-menu-item mobile-section-item" data-section="users">
+                        <i class="fas fa-users"></i>
+                        <span>Správa uživatelů</span>
+                    </button>
+                    
+                    <div class="mobile-menu-divider"></div>
+                    
+                    <button class="mobile-menu-item" id="mobile-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Odhlásit se</span>
                     </button>
                 </div>
             </div>
@@ -84,79 +124,125 @@
 
             <div id="admin-calendar-content" class="tab-content active">
                 <div class="content-grid">
-                    <div class="calendar-section">
-                        <div class="section-header">
-                            <h2><i class="fas fa-calendar-alt"></i> Kalendář směn</h2>
-                            <button id="new-shift-btn" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Nová směna
-                            </button>
+                    <div class="admin-section calendar-section">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title"><i class="fas fa-calendar-alt"></i> Kalendář směn</h2>
+                                <p class="card-subtitle">Přehled a správa směn podle kalendáře</p>
+                            </div>
+                            <div class="card-actions">
+                                <button id="new-shift-btn" class="modern-btn modern-btn-success">
+                                    <i class="fas fa-plus"></i> Nová směna
+                                </button>
+                            </div>
                         </div>
                         <div id="calendar" class="calendar"></div>
                     </div>
                     
-                    <div class="shifts-section">
-                        <h3 id="selected-date-title">Vyberte den v kalendáři</h3>
+                    <div class="admin-section shifts-section">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title" id="selected-date-title">Vyberte den v kalendáři</h3>
+                            </div>
+                        </div>
                         <div id="shifts-list" class="shifts-list"></div>
                     </div>
                 </div>
             </div>
 
             <div id="admin-shifts-content" class="tab-content">
-                <div class="section-header">
-                    <h2><i class="fas fa-clock"></i> Správa směn</h2>
-                    <button id="new-shift-btn-2" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Nová směna
-                    </button>
-                </div>
-                
-                <div class="shifts-filter">
-                    <div class="filter-label">
-                        <i class="fas fa-filter"></i> Filtrovat podle pracoviště:
+                <div class="admin-section">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title"><i class="fas fa-clock"></i> Správa směn</h2>
+                            <p class="card-subtitle">Kompletní přehled a správa všech směn</p>
+                        </div>
+                        <div class="card-actions">
+                            <button id="new-shift-btn-2" class="modern-btn modern-btn-success">
+                                <i class="fas fa-plus"></i> Nová směna
+                            </button>
+                        </div>
                     </div>
-                    <div class="filter-buttons" id="workplace-filter-buttons">
-                        <button class="filter-btn active" data-workplace="all">
-                            <i class="fas fa-th"></i> Vše
-                        </button>
+                    
+                    <div class="modern-filter">
+                        <div class="modern-filter-label">
+                            <i class="fas fa-filter"></i> Filtrovat směny
+                        </div>
+                        <div class="modern-filter-selects">
+                            <div class="filter-select-group">
+                                <label for="workplace-filter-select">
+                                    <i class="fas fa-building"></i> Pracoviště:
+                                </label>
+                                <select id="workplace-filter-select" class="modern-select">
+                                    <option value="all">Všechna pracoviště</option>
+                                </select>
+                            </div>
+                            <div class="filter-select-group">
+                                <label for="employee-filter-select">
+                                    <i class="fas fa-user"></i> Zaměstnanec:
+                                </label>
+                                <select id="employee-filter-select" class="modern-select">
+                                    <option value="all">Všichni zaměstnanci</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <div id="admin-shifts-list" class="shifts-list"></div>
                 </div>
-                
-                <div id="admin-shifts-list" class="shifts-list"></div>
             </div>
 
             <div id="admin-automatic-content" class="tab-content">
-                <div class="section-header">
-                    <h2><i class="fas fa-magic"></i> Automatické směny</h2>
-                    <button id="create-automatic-shifts-btn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Vytvořit automatické směny
-                    </button>
-                </div>
-                <div class="automatic-shifts-info">
-                    <div class="info-card">
-                        <h3><i class="fas fa-info-circle"></i> Jak to funguje</h3>
-                        <p>Vyberte pracoviště, dny v týdnu a období. Systém automaticky vytvoří směny na každý vybraný den v týdnu až do koncového data.</p>
+                <div class="admin-section">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title"><i class="fas fa-magic"></i> Automatické směny</h2>
+                            <p class="card-subtitle">Vytváření pravidelných směn podle pravidel</p>
+                        </div>
+                        <div class="card-actions">
+                            <button id="create-automatic-shifts-btn" class="modern-btn modern-btn-success">
+                                <i class="fas fa-plus"></i> Nová automatická směna
+                            </button>
+                        </div>
                     </div>
+                    
+                    
+                    <div id="automatic-shifts-list" class="automatic-shifts-list"></div>
                 </div>
-                <div id="automatic-shifts-list" class="automatic-shifts-list"></div>
             </div>
 
             <div id="admin-workplaces-content" class="tab-content">
-                <div class="section-header">
-                    <h2><i class="fas fa-building"></i> Správa pracovišť</h2>
-                    <button id="new-workplace-btn" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Nové pracoviště
-                    </button>
+                <div class="admin-section">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title"><i class="fas fa-building"></i> Správa pracovišť</h2>
+                            <p class="card-subtitle">Správa všech pracovišť a jejich nastavení</p>
+                        </div>
+                        <div class="card-actions">
+                            <button id="new-workplace-btn" class="modern-btn modern-btn-success">
+                                <i class="fas fa-plus"></i> Nové pracoviště
+                            </button>
+                        </div>
+                    </div>
+                    <div id="workplaces-list" class="workplaces-list"></div>
                 </div>
-                <div id="workplaces-list" class="workplaces-list"></div>
             </div>
 
             <div id="admin-users-content" class="tab-content">
-                <div class="section-header">
-                    <h2><i class="fas fa-users"></i> Správa uživatelů</h2>
-                    <button id="new-user-btn-2" class="btn btn-success">
-                        <i class="fas fa-user-plus"></i> Nový uživatel
-                    </button>
+                <div class="admin-section">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title"><i class="fas fa-users"></i> Správa uživatelů</h2>
+                            <p class="card-subtitle">Správa všech uživatelů a jejich oprávnění</p>
+                        </div>
+                        <div class="card-actions">
+                            <button id="new-user-btn-2" class="modern-btn modern-btn-success">
+                                <i class="fas fa-plus"></i> Nový uživatel
+                            </button>
+                        </div>
+                    </div>
+                    <div id="users-list" class="users-list"></div>
                 </div>
-                <div id="users-list" class="users-list"></div>
             </div>
         </main>
     </div>
@@ -167,16 +253,33 @@
             <div class="header-content">
                 <div class="header-left">
                     <div class="logo-small">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-calendar-alt"></i>
                     </div>
                     <div class="header-info">
-                        <h1>Uživatelské rozhraní - Resort Blatnice</h1>
-                        <p>Vítejte, <span id="user-name">Uživatel</span></p>
+                        <h1>Resort Blatnice</h1>
+                        <p>Systém správy směn</p>
                     </div>
                 </div>
-                <button id="user-logout-btn" class="btn btn-secondary">
-                    <i class="fas fa-sign-out-alt"></i> Odhlásit se
-                </button>
+                <div class="header-actions">
+                    <button id="user-logout-btn" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Odhlásit se
+                    </button>
+                    <button class="mobile-menu-toggle" id="user-mobile-menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mobile-menu" id="user-mobile-menu">
+                <div class="mobile-menu-content">
+                    <div class="mobile-menu-item">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Uživatel: <span id="mobile-user-name">Uživatel</span></span>
+                    </div>
+                    <button class="mobile-menu-item" id="user-mobile-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Odhlásit se</span>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -341,23 +444,33 @@
                     <label for="workplace-name">Název pracoviště</label>
                     <input type="text" id="workplace-name" name="workplace-name" required placeholder="Např. Wellness, Bar, Kuchyně">
                 </div>
-                <div class="form-group">
-                    <label for="workplace-description">Popis</label>
-                    <textarea id="workplace-description" name="workplace-description" placeholder="Krátký popis pracoviště"></textarea>
-                </div>
+                
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="workplace-has-fixed-hours"> Má pevné pracovní hodiny
+                        <input type="checkbox" id="workplace-has-fixed-hours"> Pevná pracovní doba
                     </label>
+                    <small class="form-help">Pokud je zaškrtnuto, pracoviště bude mít pevný čas pro vytváření směn</small>
                 </div>
+                
                 <div id="workplace-hours-section" style="display: none;">
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="workplace-fixed-start"> Pevný čas příchodu
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="workplace-fixed-end"> Pevný čas odchodu
+                        </label>
+                    </div>
+                    
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="workplace-start-time">Čas od</label>
+                        <div class="form-group" id="start-time-group" style="display: none;">
+                            <label for="workplace-start-time">Čas příchodu</label>
                             <input type="time" id="workplace-start-time" name="workplace-start-time">
                         </div>
-                        <div class="form-group">
-                            <label for="workplace-end-time">Čas do</label>
+                        <div class="form-group" id="end-time-group" style="display: none;">
+                            <label for="workplace-end-time">Čas odchodu</label>
                             <input type="time" id="workplace-end-time" name="workplace-end-time">
                         </div>
                     </div>
@@ -383,7 +496,12 @@
                 <form id="new-user-form">
                     <div class="form-group">
                         <label for="user-name-input">Jméno uživatele</label>
-                        <input type="text" id="user-name-input" placeholder="Zadejte jméno uživatele" required>
+                        <input type="text" id="user-name-input" name="user-name-input" placeholder="Zadejte jméno uživatele" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-pin-input">PIN uživatele</label>
+                        <input type="text" id="user-pin-input" name="user-pin-input" placeholder="Zadejte 4místný PIN" maxlength="4" pattern="[0-9]{4}" required>
+                        <small class="form-help">PIN musí mít přesně 4 číslice</small>
                     </div>
                     <div class="modal-actions">
                         <button type="button" class="btn btn-secondary">Zrušit</button>

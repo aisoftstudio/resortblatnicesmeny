@@ -36,6 +36,14 @@ class SpravaUzivateluManager {
      */
     nastavitEventListeners() {
         // Event listenery pro modaly budou nastaveny v hlavní aplikaci
+        
+        // PIN input pro nového uživatele - pouze číslice a max 4 znaky
+        const userPinInput = document.getElementById('user-pin-input');
+        if (userPinInput) {
+            userPinInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+            });
+        }
     }
 
     /**
@@ -71,9 +79,15 @@ class SpravaUzivateluManager {
                             </div>
                         </div>
                         <div class="user-actions">
-                            <button class="btn btn-danger btn-sm" onclick="spravaUzivateluManager.deleteUser('${user.id}')" title="Smazat uživatele">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            ${!user.isAdmin ? `
+                                <button class="btn btn-danger btn-sm" onclick="spravaUzivateluManager.deleteUser('${user.id}')" title="Smazat uživatele">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : `
+                                <span class="admin-protected" title="Administrátorský účet nelze smazat">
+                                    <i class="fas fa-shield-alt"></i>
+                                </span>
+                            `}
                         </div>
                     </div>
                     
@@ -141,17 +155,27 @@ class SpravaUzivateluManager {
         
         const formData = new FormData(e.target);
         const userName = formData.get('user-name-input');
+        const userPin = formData.get('user-pin-input');
         
         if (!ValidationUtils.validateName(userName)) {
             alert('Prosím zadejte platné jméno uživatele');
             return;
         }
         
-        const newPin = this.generatePin();
+        if (!ValidationUtils.validatePin(userPin)) {
+            alert('Prosím zadejte platný 4místný PIN');
+            return;
+        }
+        
+        // Kontrola, zda PIN již neexistuje
+        if (this.users.some(user => user.pin === userPin)) {
+            alert('Tento PIN již existuje. Zvolte jiný PIN.');
+            return;
+        }
         
         const newUser = {
             id: 'user-' + Date.now(),
-            pin: newPin,
+            pin: userPin,
             name: ValidationUtils.sanitizeText(userName),
             isAdmin: false
         };
@@ -180,7 +204,7 @@ class SpravaUzivateluManager {
             if (formContainer) formContainer.style.display = 'none';
             if (resultContainer) resultContainer.style.display = 'block';
             if (createdUserName) createdUserName.textContent = userName;
-            if (newUserPin) newUserPin.textContent = newPin;
+            if (newUserPin) newUserPin.textContent = userPin;
             
         } catch (error) {
             console.error('Chyba při vytváření uživatele:', error);
@@ -250,13 +274,20 @@ class SpravaUzivateluManager {
      * Smazání uživatele
      */
     async deleteUser(userId) {
+        // Najdeme uživatele pro kontrolu admin práv
+        const user = this.users.find(u => u.id === userId);
+        
+        // Zabránění smazání administrátorského účtu
+        if (user && user.isAdmin) {
+            alert('Administrátorský účet nelze smazat!');
+            return;
+        }
+        
         if (!confirm('Opravdu chcete smazat tohoto uživatele? Tato akce je nevratná.')) {
             return;
         }
         
         try {
-            // Najdeme uživatele pro získání Firebase ID
-            const user = this.users.find(u => u.id === userId);
             
             // Odstranění uživatele ze všech směn
             this.shifts.forEach(shift => {

@@ -55,7 +55,7 @@ npm start
 ## 🔐 Testovací účty
 
 ### Admin
-- **PIN:** `12345`
+- **PIN:** `0125`
 - **Přístup:** Admin rozhraní s plnými právy
 
 ### Uživatel
