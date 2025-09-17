@@ -285,10 +285,10 @@
 
         <main class="main-content">
             <div class="tabs">
-                <button id="calendar-tab" class="tab active">
+                <button id="calendar-tab" class="tab active" onclick="switchUserTab('calendar')">
                     <i class="fas fa-calendar-alt"></i> Kalendář směn
                 </button>
-                <button id="my-shifts-tab" class="tab">
+                <button id="my-shifts-tab" class="tab" onclick="switchUserTab('my-shifts')">
                     <i class="fas fa-hand-paper"></i> Moje směny (<span id="my-shifts-count">0</span>)
                 </button>
             </div>
@@ -548,5 +548,13 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="firebase.js"></script>
     <script src="script.js"></script>
-</body>
+    <script src="src/shared/services/firebase-service.js"></script>
+    <script src="src/admin/kalendar-smen/kalendar-smen.js"></script>
+    <script src="src/admin/sprava-smen/sprava-smen.js"></script>
+    <script src="src/admin/automaticke-smeny/automaticke-smeny.js"></script>
+    <script src="src/admin/sprava-pracovist/sprava-pracovist.js"></script>
+    <script src="src/admin/sprava-uzivatelu/sprava-uzivatelu.js"></script>
+    <script src="src/app.js"></script>
+    <script src="src/shared/utils/date-utils.js"></script>
+    </body>
 </html>

@@ -326,9 +326,6 @@ function showAdminInterface() {
     // Inicializace mobilního menu pro admin sekce
     updateMobileMenuActiveState('calendar');
     
-    // Inicializace selectu pracovišť
-    updateWorkplaceSelect();
-    
     // Inicializace prvního tabu (kalendář)
     switchAdminTab('calendar');
 }
@@ -874,6 +871,12 @@ async function removeUserFromShift(shiftId, userId) {
 function showNewShiftModal() {
     document.getElementById('new-shift-modal').classList.add('active');
     
+    // Aktualizace selectu pracovišť z aktuálních dat
+    const workplaceSelect = document.getElementById('shift-position');
+    workplaceSelect.innerHTML = workplaces.map(workplace => 
+        `<option value="${workplace.name}">${workplace.name}</option>`
+    ).join('');
+    
     // Nastavení dnešního data jako výchozího
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
@@ -1172,6 +1175,8 @@ async function loadData() {
         // Aktualizace UI po načtení dat
         if (currentUser) {
             showUserInterface();
+            // Aktualizace select elementů po načtení dat z Firebase
+            updateWorkplaceSelect();
         }
         
     } catch (error) {
@@ -1868,19 +1873,34 @@ async function deleteAutomaticRule(ruleId) {
         // Najdeme pravidlo pro získání Firebase ID
         const rule = automaticRules.find(r => r.id === ruleId);
         
-        // Smazání všech směn vygenerovaných tímto pravidlem
+        // Najdeme všechny směny vygenerované tímto pravidlem
+        const shiftsToDelete = shifts.filter(shift => shift.ruleId === ruleId);
+        
+        // Smazání všech směn vygenerovaných tímto pravidlem z Firebase
+        for (const shift of shiftsToDelete) {
+            if (shift.firebaseId) {
+                try {
+                    await window.firebaseServices.smazatSměnu(shift.firebaseId);
+                } catch (error) {
+                    console.error(`Chyba při mazání směny ${shift.id} z Firebase:`, error);
+                }
+            }
+        }
+        
+        // Smazání všech směn vygenerovaných tímto pravidlem z lokálního pole
         shifts = shifts.filter(shift => shift.ruleId !== ruleId);
         
         // Smazání pravidla
         automaticRules = automaticRules.filter(r => r.id !== ruleId);
         
-        // Uložení změn
-        await saveData();
-        
         // Smazání pravidla z Firebase (pokud má Firebase ID)
         if (rule && rule.firebaseId) {
             await window.firebaseServices.smazatAutomatickePravidlo(rule.firebaseId);
         }
+        
+        // Uložení změn (aktualizace globálních proměnných)
+        window.shifts = shifts;
+        window.automaticRules = automaticRules;
         
         // Aktualizace zobrazení
         updateAutomaticShiftsList();

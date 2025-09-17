@@ -353,11 +353,39 @@ function showUserPage() {
     const todayStr = today.toISOString().split('T')[0];
     selectedDate = todayStr;
     
-    // TODO: Inicializace uživatelských komponent
-    // renderCalendar('user-calendar');
-    // updateUserShiftsList();
-    // updateMyShiftsList();
-    // updateMyShiftsCount();
+    // Inicializace uživatelských komponent
+    renderCalendar('user-calendar');
+    updateUserShiftsList();
+    updateMyShiftsList();
+    updateMyShiftsCount();
+    
+    // Inicializace prvního tabu (kalendář)
+    switchUserTab('calendar');
+}
+
+/**
+ * Přepnutí uživatelských tabů
+ */
+function switchUserTab(tabName) {
+    // Aktualizace uživatelských tabů
+    document.querySelectorAll('#user-page .tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('#user-page .tab-content').forEach(content => content.classList.remove('active'));
+    
+    // Aktivace vybraného tabu
+    const activeTab = document.getElementById(`${tabName}-tab`);
+    const activeContent = document.getElementById(`${tabName}-content`);
+    
+    if (activeTab) activeTab.classList.add('active');
+    if (activeContent) activeContent.classList.add('active');
+    
+    // Aktualizace obsahu podle tabu
+    if (tabName === 'calendar') {
+        renderCalendar('user-calendar');
+        updateUserShiftsList();
+    } else if (tabName === 'my-shifts') {
+        updateMyShiftsList();
+        updateMyShiftsCount();
+    }
 }
 
 /**
@@ -415,7 +443,14 @@ function showErrorMessage(message) {
 
 // Globální funkce pro kompatibilitu s existujícím kódem
 window.switchAdminTab = switchAdminTab;
+window.switchUserTab = switchUserTab;
 window.showErrorMessage = showErrorMessage;
+
+// Globální reference na uživatelské funkce (jsou definované v script.js)
+window.renderCalendar = window.renderCalendar;
+window.updateUserShiftsList = window.updateUserShiftsList;
+window.updateMyShiftsList = window.updateMyShiftsList;
+window.updateMyShiftsCount = window.updateMyShiftsCount;
 
 // Spuštění aplikace při načtení DOM
 if (document.readyState === 'loading') {

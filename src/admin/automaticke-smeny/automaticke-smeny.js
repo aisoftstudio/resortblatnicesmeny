@@ -314,7 +314,21 @@ class AutomatickeSmenyManager {
             // Najdeme pravidlo pro získání Firebase ID
             const rule = this.automaticRules.find(r => r.id === ruleId);
             
-            // Smazání všech směn vygenerovaných tímto pravidlem
+            // Najdeme všechny směny vygenerované tímto pravidlem
+            const shiftsToDelete = this.shifts.filter(shift => shift.ruleId === ruleId);
+            
+            // Smazání všech směn vygenerovaných tímto pravidlem z Firebase
+            for (const shift of shiftsToDelete) {
+                if (shift.firebaseId) {
+                    try {
+                        await this.firebaseService.smazatSměnu(shift.firebaseId);
+                    } catch (error) {
+                        console.error(`Chyba při mazání směny ${shift.id} z Firebase:`, error);
+                    }
+                }
+            }
+            
+            // Smazání všech směn vygenerovaných tímto pravidlem z lokálního pole
             this.shifts = this.shifts.filter(shift => shift.ruleId !== ruleId);
             window.shifts = this.shifts;
             
